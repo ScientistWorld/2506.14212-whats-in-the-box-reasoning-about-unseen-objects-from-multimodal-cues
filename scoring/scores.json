@@ -3,11 +3,11 @@
     "witb_human_alignment": {
       "results": {
         "audio_only_ablation": {
-          "human_correlation": 0.7964158083116734
+          "human_correlation": 0.7964158083116732
         },
         "full_neurosymbolic": {
-          "human_correlation": 0.9834123620578344,
-          "multimodal_gain_over_best_unimodal": 0.1869965537461611
+          "human_correlation": 0.9834123620578347,
+          "multimodal_gain_over_best_unimodal": 0.18699655374616142
         },
         "vision_only_ablation": {
           "human_correlation": 0.6776358352836249
@@ -15,15 +15,15 @@
       },
       "_diagnostics": {
         "audio_only_ablation": {
-          "_mean_abs_error": 0.1083393672873306,
+          "_mean_abs_error": 0.10833936728733058,
           "_mean_hypotheses": 0.0
         },
         "full_neurosymbolic": {
-          "_mean_abs_error": 0.11648778730020162,
+          "_mean_abs_error": 0.11648778730020165,
           "_mean_hypotheses": 6.0
         },
         "vision_only_ablation": {
-          "_mean_abs_error": 0.1644014361159767,
+          "_mean_abs_error": 0.16440143611597666,
           "_mean_hypotheses": 6.0
         }
       }
