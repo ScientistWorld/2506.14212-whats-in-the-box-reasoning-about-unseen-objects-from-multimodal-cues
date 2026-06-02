@@ -1,0 +1,51 @@
+{
+  "experiments": {
+    "witb_human_alignment": {
+      "slice": "test",
+      "scenario_ids": [
+        "scenario_d_plate_spoon_towel",
+        "scenario_e_flashlight_keys_sponge"
+      ],
+      "results": {
+        "audio_only_ablation": {
+          "human_correlation": 0.933180414917204,
+          "mean_absolute_error": 0.07277815579673164,
+          "brier_score": 0.007392672494610068,
+          "within_scenario_rank_accuracy": 1.0
+        },
+        "full_neurosymbolic": {
+          "human_correlation": 0.9800647916810795,
+          "mean_absolute_error": 0.1322451395748422,
+          "brier_score": 0.018959048304573414,
+          "within_scenario_rank_accuracy": 1.0,
+          "multimodal_gain_over_best_unimodal": 0.04688437676387547,
+          "joint_gain_over_late_fusion": 0.011956926311864069
+        },
+        "vision_only_ablation": {
+          "human_correlation": 0.7562734790058144,
+          "mean_absolute_error": 0.12469237136662574,
+          "brier_score": 0.02279900827657388,
+          "within_scenario_rank_accuracy": 0.8333333333333334
+        }
+      },
+      "_diagnostics": {
+        "audio_only_ablation": {
+          "_mean_hypotheses": 0.0,
+          "_num_scenarios": 2.0
+        },
+        "full_neurosymbolic": {
+          "_mean_hypotheses": 6.0,
+          "_num_scenarios": 2.0
+        },
+        "vision_only_ablation": {
+          "_mean_hypotheses": 6.0,
+          "_num_scenarios": 2.0
+        },
+        "late_fusion_average": {
+          "_human_correlation": 0.9681078653692154,
+          "_mean_absolute_error": 0.04845218039067314
+        }
+      }
+    }
+  }
+}
