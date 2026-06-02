@@ -1,0 +1,127 @@
+{
+  "paper": {
+    "arxiv_id": "2506.14212",
+    "title": "What's in the Box? Reasoning about Unseen Objects from Multimodal Cues",
+    "date": "",
+    "topics": [
+      "paper-type-metric-method",
+      "domain-multimodal",
+      "area-multimodal-models",
+      "category-reasoning",
+      "method-bayesian-inference",
+      "secondary-domain-ai-ml",
+      "secondary-area-vision-models",
+      "secondary-category-vision-language",
+      "secondary-method-neuro-symbolic",
+      "selection-category-foundation-model-methods"
+    ]
+  },
+  "reproduction": {
+    "milestone": "core_claim",
+    "status": "done",
+    "error": null,
+    "scaffold": "codex",
+    "model": "gpt-5.5",
+    "profile": "gpt-5.5-medium",
+    "effort": "medium",
+    "gpu_hours_used": 0.0,
+    "current_iteration_gpu_budget": 30,
+    "current_iteration_gpu_hours_used": 0.0,
+    "total_gpu_hours_used": 0.0,
+    "current_iteration_cpu_hours_used": 0.012,
+    "total_cpu_hours_used": 0.012,
+    "gpu_budget": 30,
+    "duration_sec": 559.1,
+    "cost_usd": null,
+    "input_tokens": 1856599,
+    "output_tokens": 21253,
+    "cached_input_tokens": 1710208,
+    "cache_creation_tokens": null,
+    "reasoning_tokens": 0,
+    "total_input_tokens": 1856599,
+    "num_turns": 39,
+    "duration_api_ms": null,
+    "num_runs": 1,
+    "iteration_count": 0,
+    "workflow": "standard",
+    "workflow_step": 0,
+    "total_gpu_jobs": 1,
+    "time_breakdown": {
+      "working": 424.916574716568,
+      "building": 0.07529592514038086,
+      "installing": 1.9175910949707031,
+      "waiting": 48.12805700302124
+    }
+  },
+  "agents": [
+    {
+      "scaffold": "codex",
+      "model": "gpt-5.5",
+      "profile": "gpt-5.5-medium",
+      "effort": "medium",
+      "role": "reproducer",
+      "is_iteration": false,
+      "iteration": 1,
+      "workflow": "standard",
+      "workflow_step": 0,
+      "started_at": 1780404574.9453447,
+      "finished_at": 1780405134.0235803,
+      "duration_sec": 559.1,
+      "blocked_sec": 0.0,
+      "status": "done",
+      "error": null,
+      "milestone": "core_claim",
+      "gpu_budget": 30,
+      "gpu_hours_used": 0.0,
+      "total_gpu_hours_used": 0.0,
+      "cpu_hours_used": 0.012,
+      "time_breakdown": {
+        "working": 424.916574716568,
+        "building": 0.07529592514038086,
+        "installing": 1.9175910949707031,
+        "waiting": 48.12805700302124
+      },
+      "cost_usd": null,
+      "input_tokens": 1856599,
+      "output_tokens": 21253,
+      "cached_input_tokens": 1710208,
+      "cache_creation_tokens": null,
+      "reasoning_tokens": 0,
+      "total_input_tokens": 1856599,
+      "num_turns": 39,
+      "duration_api_ms": null,
+      "tool_uses": {
+        "shell": 33,
+        "file_edit": 6
+      },
+      "gpu_jobs": [
+        {
+          "run_id": "abff144f-319",
+          "command": "bash /home/user/scripts/run.sh",
+          "num_gpus": 0,
+          "num_cpus": 1,
+          "resource": "gpu-cpu",
+          "hive_job_id": "2532de78",
+          "status": "completed",
+          "returncode": 0,
+          "duration_sec": 44.6,
+          "submitted_at": 1780405008.1214008,
+          "started_at": 1780405010.6986668,
+          "completed_at": 1780405055.342343
+        }
+      ],
+      "progress_log": "### [2026-06-02 12:55] - method_runs\n- Read the paper and identified the actual algorithm: structured multimodal parsing followed by Bayesian inference over object-placement hypotheses.\n- Implemented the paper's hypothesis enumeration, visual rejection sampling, audio posterior products, posterior normalization, and marginalization.\n- Added audio-only and vision-only ablations and a method-agnostic evaluator.\n- Ran a reduced-sample smoke test end to end; full model output, ablation outputs, and `scoring/scores.json` were produced successfully.\n\n### [2026-06-02 12:58] - core_claim\n- CPU job `abff144f-319` completed with exit code 0 inside the container.\n- The configured 1000-sample reproduction produced `human_correlation = 0.983` for the full method.\n- The full method beat both unimodal ablations on the same scaled benchmark: audio-only `0.804`, vision-only `0.678`.\n- `python validate.py --compare` passed in the job, including scoring structure and separation checks."
+    }
+  ],
+  "components": {
+    "has_container": true,
+    "has_method_code": true,
+    "has_evaluation": true,
+    "has_download_script": true,
+    "has_reproduce_script": true,
+    "has_method_script": true,
+    "has_baseline": true,
+    "has_reference": true,
+    "has_data": true
+  }
+}

@@ -1,26 +1,143 @@
+# Overview
+
+- **Paper ID:** 2506.14212
+- **Title:** What's in the Box? Reasoning about Unseen Objects from Multimodal Cues
+- **Domain:** Cognitive Science / Multimodal Reasoning
+- **TL;DR:** The paper models human-like guesses about hidden objects by parsing multimodal cues and integrating them with Bayesian inference over object placements.
+
+## Short Summary
+
+The paper introduces the What-is-in-the-Box task, where people and models infer
+which listed objects are hidden in boxes after seeing and hearing the boxes
+handled. Its model uses neural parsers to convert object names, box images, and
+audio into structured evidence, then performs Bayesian inference over all
+object-placement hypotheses. The reported full model correlates much more
+strongly with human judgments than audio-only, vision-only, or Gemini 2.0 Flash
+baselines.
+
+## Key Results
+
+- Full model human-correlation: `r = 0.78`.
+- Unimodal ablations are lower: audio-only `r = 0.55`, vision-only `r = 0.52`.
+- Gemini 2.0 Flash baseline is much lower: `r = 0.31`.
+
+---
+
 # Problem Definition
-
-What problem does this paper address? Write this so that someone with no knowledge of the paper can understand what needs to be solved and how success is measured.
-
-Do NOT describe the paper's method or solution here — only the problem itself. Think about if a future scientist agent try to solve this problem from scratch without knowing what approach the paper took. If you leak the solution, you compromise the benchmark.
 
 ## Research Question
 
-<!-- What problem or challenge does this paper tackle? What gap in existing work does it address? -->
+How can a system infer which unseen household objects are inside which boxes
+from incomplete multimodal evidence: a list of candidate objects, visible box
+sizes, and sounds produced when the boxes are handled?
 
 ## Why It Matters
 
-<!-- Why is this problem important? What would a good solution enable? Make it short -->
+Everyday physical reasoning often requires judging hidden states from indirect
+cues. A good solution would support robots and AI systems that can reason about
+occluded objects under uncertainty instead of relying only on direct visual
+recognition.
 
 ## Success Criteria
 
-<!-- What would a successful solution look like? What properties should it have? This is about the goal, not the paper's specific approach. Make it short -->
+A successful system outputs calibrated object-by-box probability judgments that
+align with human judgments and improves over systems that rely on only one
+modality. The evaluation should preserve the same object lists, boxes, and cue
+inputs across methods.
+
+---
+
+# Paper's Method
+
+## Key Contribution
+
+The paper proposes a neurosymbolic model for hidden-object reasoning in the
+What-is-in-the-Box game. Neural perception modules parse language, vision, and
+audio into structured evidence, then a Bayesian symbolic engine integrates the
+evidence over explicit object-placement hypotheses.
+
+## Approach
+
+The language parser estimates uncertain object physical attributes such as size
+and rigidity from object names. The vision parser estimates box dimensions from
+the first video frame. The audio parser uses CLAP with scenario object names as
+candidate labels to produce per-box object probabilities.
+
+The reasoning engine enumerates all non-empty assignments of objects to boxes,
+uses a uniform prior, estimates visual likelihoods by rejection sampling whether
+sampled object dimensions fit sampled box dimensions, multiplies audio
+posteriors for objects assigned to each box, normalizes the posterior over
+hypotheses, and marginalizes to per-object box probabilities.
+
+## Main Claims
+
+The primary claim is that multimodal Bayesian integration aligns strongly with
+human probability judgments and outperforms unimodal ablations. The paper
+reports `r = 0.78` for the full model, compared with `r = 0.55` for audio-only,
+`r = 0.52` for vision-only, and `r = 0.31` for Gemini 2.0 Flash.
+
+Secondary claims are that geometry helps for size-constrained objects, audio
+helps for distinctive sounds, and joint hypothesis-level inference is more
+informative than simply averaging unimodal outputs.
+
+---
+
+# Evaluation
+
+## Metrics
+
+The primary metric is Pearson correlation between a system's object-in-left-box
+probabilities and average human object-in-left-box probability ratings across
+all scenario/object queries. Higher correlation is better.
+
+## Baselines and Targets
+
+The paper reports these correlations on its unreleased 20-stimulus analysis set:
+full system `r = 0.78`, audio-only `r = 0.55`, vision-only `r = 0.52`, and
+Gemini 2.0 Flash `r = 0.31`. In this scaled environment, success is measured by
+running the same evaluation metric on the included parsed benchmark and checking
+that the multimodal system beats both unimodal reference methods.
+
+## Evaluation Protocol
+
+Methods write prediction artifacts to `outputs/witb_*_predictions.json`. Each
+artifact must contain per-scenario object-in-left-box probabilities. Run
+`bash scripts/evaluate.sh outputs data/witb_parsed_benchmark.json` to write
+`scoring/scores.json`. Evaluation code must not call into `method/`; it only
+reads predictions and the benchmark targets.
+
+---
+
+# Reproduction Log
+
+### Iteration 1: gpt-5.5
+- **Milestone**: `core_claim` | **Status**: done
+- **Working time**: 7m | **GPU**: 0.0h
+- **Jobs**: 1 total (1 completed, 0 failed)
+
+<details>
+<summary>Progress Log</summary>
+
+### [2026-06-02 12:55] - method_runs
+- Read the paper and identified the actual algorithm: structured multimodal parsing followed by Bayesian inference over object-placement hypotheses.
+- Implemented the paper's hypothesis enumeration, visual rejection sampling, audio posterior products, posterior normalization, and marginalization.
+- Added audio-only and vision-only ablations and a method-agnostic evaluator.
+- Ran a reduced-sample smoke test end to end; full model output, ablation outputs, and `scoring/scores.json` were produced successfully.
+
+### [2026-06-02 12:58] - core_claim
+- CPU job `abff144f-319` completed with exit code 0 inside the container.
+- The configured 1000-sample reproduction produced `human_correlation = 0.983` for the full method.
+- The full method beat both unimodal ablations on the same scaled benchmark: audio-only `0.804`, vision-only `0.678`.
+- `python validate.py --compare` passed in the job, including scoring structure and separation checks.
+
+</details>
+
 
 ---
 
 # Reproduction Milestones
 
-**Current: none**
+**Current: core_claim**
 
 ## Stop Justification
-- Completed at milestone `none`.
+- Completed at milestone `core_claim`.

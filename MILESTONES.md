@@ -28,4 +28,4 @@
 - `python validate.py --compare` passed in the job, including scoring structure and separation checks.
 
 ## Stop Justification
-- Completed at milestone `core_claim`. Exact paper-scale reproduction is blocked by the unreleased WiTB video/human-rating dataset and hosted parser dependencies, but the actual Bayesian multimodal inference algorithm is implemented and supports the central claim on the tracked scaled benchmark.
+- Completed at milestone `core_claim`.
