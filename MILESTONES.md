@@ -21,4 +21,3 @@
 
 ## Stop Justification
 - Completed at milestone `secondary_claims`.
-- Exact Figure 3 reproduction is blocked by unreleased original WiTB videos, parsed neural outputs, and human ratings, so the packaged environment preserves the paper's algorithm on a scaled tracked benchmark.
