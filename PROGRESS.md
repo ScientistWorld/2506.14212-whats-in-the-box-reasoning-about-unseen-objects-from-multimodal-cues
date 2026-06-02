@@ -11,7 +11,7 @@
 
 ## Results
 
-Current corrected local validation (`SAMPLES=1000`, `python validate.py --compare` passed):
+Corrected compute validation (`SAMPLES=1000`, job `2029a1ef-afb`, exit code 0, `python validate.py --compare` passed):
 
 - Full neurosymbolic: `human_correlation = 0.983`
 - Audio-only ablation: `human_correlation = 0.796`
@@ -22,8 +22,8 @@ The full method beats both unimodal ablations, supporting the paper's core
 claim on the scaled parsed benchmark.
 
 Previous compute job `abff144f-319` completed successfully before the audio-only
-baseline was corrected to the paper's Eq. 3 formula. A fresh CPU smoke test is
-being submitted to verify the corrected code path in the container.
+baseline was corrected to the paper's Eq. 3 formula. Job `2029a1ef-afb`
+verified the corrected code path in the container.
 
 Earlier reduced-sample smoke test (`SAMPLES=50`) on the scaled parsed benchmark:
 
@@ -47,7 +47,7 @@ Paper reported on its unreleased analysis set:
 
 - The original 25 WiTB stimuli, parsed neural outputs, and human participant ratings are not released in the paper. Exact numerical reproduction of Figure 3 is therefore not possible from the paper alone.
 - Gemini 2.0 Flash and Llama 3.1 70B are hosted or very large systems; this scaled reproduction uses tracked structured parser outputs instead of calling unavailable APIs on compute nodes.
-- The notification's absolute stdout/stderr paths were not mounted in this container, but the same logs were available under `jobs/abff144f-319/`.
+- Compute logs for the corrected run are available under `jobs/2029a1ef-afb/`.
 
 ## Deviations from Paper
 

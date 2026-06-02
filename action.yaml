@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: submit
+action: done
 gpus: 0
 test: true
 milestone: core_claim
-notes: "CPU smoke test: rerun the WiTB full method and unimodal ablations, regenerate scores.json, and validate against reference.json after correcting the audio-only ablation."
+notes: "Corrected WiTB reproduction verified in CPU container job 2029a1ef-afb. Full method beats both unimodal ablations on the scaled parsed benchmark; higher milestones require unreleased original stimuli/ratings or hosted Gemini/Llama resources."
