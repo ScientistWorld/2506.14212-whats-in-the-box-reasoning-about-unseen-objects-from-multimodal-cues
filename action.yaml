@@ -2,8 +2,8 @@
 # Once you set action to 'done', STOP immediately.
 # Do NOT sleep, poll, or wait. The system reads this file
 # only after your turn ends.
-action: pending
+action: done
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: ""
+notes: "Fixed scenario split: train 3 WiTB scenarios, test 2 held-out scenarios; 4 scored metrics per slice; scripts written, scores produced later."
