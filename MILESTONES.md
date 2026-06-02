@@ -1,6 +1,6 @@
 # Reproduction Milestones
 
-**Current: none**
+**Current: method_runs**
 
 <!-- Milestone levels (update "Current" above as you progress):
   none             — just started, no meaningful progress yet
@@ -15,7 +15,11 @@
 
 ## Progress Log
 
-<!-- Write your progress here -->
+### [2026-06-02 12:55] - method_runs
+- Read the paper and identified the actual algorithm: structured multimodal parsing followed by Bayesian inference over object-placement hypotheses.
+- Implemented the paper's hypothesis enumeration, visual rejection sampling, audio posterior products, posterior normalization, and marginalization.
+- Added audio-only and vision-only ablations and a method-agnostic evaluator.
+- Ran a reduced-sample smoke test end to end; full model output, ablation outputs, and `scoring/scores.json` were produced successfully.
 
 ## Stop Justification
-- Completed at milestone `none`.
+- Not stopped. Submitting a CPU job to run the configured 1000-sample reproduction and validation.

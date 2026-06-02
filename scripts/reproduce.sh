@@ -18,7 +18,14 @@ set -e
 
 cd /home/user
 
-# TODO: implement full reproduction pipeline
-# e.g.:
-#   bash scripts/baseline.sh
-#   bash scripts/method.sh
+SAMPLES="${SAMPLES:-1000}"
+SEED="${SEED:-17}"
+OUTPUT_DIR="${OUTPUT_DIR:-outputs}"
+export SAMPLES SEED OUTPUT_DIR
+
+rm -rf "$OUTPUT_DIR"
+mkdir -p "$OUTPUT_DIR"
+
+bash scripts/baseline.sh all
+bash scripts/method.sh
+bash scripts/evaluate.sh "$OUTPUT_DIR" data/witb_parsed_benchmark.json

@@ -17,4 +17,18 @@ set -e
 
 cd /home/user
 
-# TODO: run baseline
+SAMPLES="${SAMPLES:-1000}"
+SEED="${SEED:-17}"
+DATA_PATH="${DATA_PATH:-data/witb_parsed_benchmark.json}"
+OUTPUT_DIR="${OUTPUT_DIR:-outputs}"
+WHICH="${1:-all}"
+
+mkdir -p "$OUTPUT_DIR"
+python baseline/witb_baselines.py \
+  --data "$DATA_PATH" \
+  --output-dir "$OUTPUT_DIR" \
+  --samples "$SAMPLES" \
+  --seed "$SEED" \
+  --which "$WHICH"
+
+bash scripts/evaluate.sh "$OUTPUT_DIR" "$DATA_PATH"

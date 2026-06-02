@@ -1,15 +1,23 @@
 # Evaluation
 
-How success is measured. Describe only the metrics, targets, and evaluation procedure — do NOT describe the paper's method or how they achieved these results. Think of this as a general evaluation protocal for other scientists trying to solve the same problem, where they should not see this paper's solution.
-
 ## Metrics
 
-<!-- What metrics are used? How are they computed? What does higher/lower mean? -->
+The primary metric is Pearson correlation between a system's object-in-left-box
+probabilities and average human object-in-left-box probability ratings across
+all scenario/object queries. Higher correlation is better.
 
 ## Baselines and Targets
 
-<!-- What performance levels exist as reference points? Include the paper's reported numbers as targets, and any standard baselines. A scientist agent should know what "good" looks like. -->
+The paper reports these correlations on its unreleased 20-stimulus analysis set:
+full system `r = 0.78`, audio-only `r = 0.55`, vision-only `r = 0.52`, and
+Gemini 2.0 Flash `r = 0.31`. In this scaled environment, success is measured by
+running the same evaluation metric on the included parsed benchmark and checking
+that the multimodal system beats both unimodal reference methods.
 
 ## Evaluation Protocol
 
-<!-- How should evaluation be run? What data split, what conditions? Any important details about how to compare fairly (e.g., fixed seeds, specific test sets, averaging over runs). -->
+Methods write prediction artifacts to `outputs/witb_*_predictions.json`. Each
+artifact must contain per-scenario object-in-left-box probabilities. Run
+`bash scripts/evaluate.sh outputs data/witb_parsed_benchmark.json` to write
+`scoring/scores.json`. Evaluation code must not call into `method/`; it only
+reads predictions and the benchmark targets.

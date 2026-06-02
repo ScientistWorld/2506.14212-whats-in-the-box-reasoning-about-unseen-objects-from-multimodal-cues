@@ -10,5 +10,17 @@ set -e
 
 cd /home/user
 
-# TODO: run the paper's method
-# TODO: call scripts/evaluate.sh to score
+SAMPLES="${SAMPLES:-1000}"
+SEED="${SEED:-17}"
+DATA_PATH="${DATA_PATH:-data/witb_parsed_benchmark.json}"
+OUTPUT_DIR="${OUTPUT_DIR:-outputs}"
+
+mkdir -p "$OUTPUT_DIR"
+python method/witb_bayes.py \
+  --data "$DATA_PATH" \
+  --output "$OUTPUT_DIR/witb_full_predictions.json" \
+  --mode full \
+  --samples "$SAMPLES" \
+  --seed "$SEED"
+
+bash scripts/evaluate.sh "$OUTPUT_DIR" "$DATA_PATH"

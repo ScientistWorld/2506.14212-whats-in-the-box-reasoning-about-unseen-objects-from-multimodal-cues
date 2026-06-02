@@ -16,4 +16,9 @@
 
 set -e
 
-# uv pip install --system <packages>
+# No third-party Python packages are required for the scaled reproduction.
+python - <<'PY'
+import json
+import statistics
+print("stdlib dependency check ok")
+PY

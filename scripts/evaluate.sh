@@ -26,5 +26,10 @@ cd /home/user
 
 mkdir -p scoring
 
-# TODO: implement evaluation using code in eval/
-# Must write scoring/scores.json at the end
+PREDICTIONS_DIR="${1:-outputs}"
+DATA_PATH="${2:-data/witb_parsed_benchmark.json}"
+
+python eval/evaluate_witb.py \
+  --data "$DATA_PATH" \
+  --predictions-dir "$PREDICTIONS_DIR" \
+  --scores scoring/scores.json

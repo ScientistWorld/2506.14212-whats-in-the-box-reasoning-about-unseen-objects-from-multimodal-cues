@@ -1,17 +1,21 @@
 # Problem Definition
 
-What problem does this paper address? Write this so that someone with no knowledge of the paper can understand what needs to be solved and how success is measured.
-
-Do NOT describe the paper's method or solution here — only the problem itself. Think about if a future scientist agent try to solve this problem from scratch without knowing what approach the paper took. If you leak the solution, you compromise the benchmark.
-
 ## Research Question
 
-<!-- What problem or challenge does this paper tackle? What gap in existing work does it address? -->
+How can a system infer which unseen household objects are inside which boxes
+from incomplete multimodal evidence: a list of candidate objects, visible box
+sizes, and sounds produced when the boxes are handled?
 
 ## Why It Matters
 
-<!-- Why is this problem important? What would a good solution enable? Make it short -->
+Everyday physical reasoning often requires judging hidden states from indirect
+cues. A good solution would support robots and AI systems that can reason about
+occluded objects under uncertainty instead of relying only on direct visual
+recognition.
 
 ## Success Criteria
 
-<!-- What would a successful solution look like? What properties should it have? This is about the goal, not the paper's specific approach. Make it short -->
+A successful system outputs calibrated object-by-box probability judgments that
+align with human judgments and improves over systems that rely on only one
+modality. The evaluation should preserve the same object lists, boxes, and cue
+inputs across methods.
