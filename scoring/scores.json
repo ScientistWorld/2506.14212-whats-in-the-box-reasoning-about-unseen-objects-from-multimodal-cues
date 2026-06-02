@@ -6,23 +6,23 @@
           "human_correlation": 0.8035854974628205
         },
         "full_neurosymbolic": {
-          "human_correlation": 0.9542822051820031
+          "human_correlation": 0.9834123620578347
         },
         "vision_only_ablation": {
-          "human_correlation": 0.6955977320073272
+          "human_correlation": 0.6776358352836249
         }
       },
       "_diagnostics": {
         "audio_only_ablation": {
-          "_mean_abs_error": 0.14110063936203562,
+          "_mean_abs_error": 0.14110063936203565,
           "_mean_hypotheses": 6.0
         },
         "full_neurosymbolic": {
-          "_mean_abs_error": 0.12166739301410237,
+          "_mean_abs_error": 0.11648778730020165,
           "_mean_hypotheses": 6.0
         },
         "vision_only_ablation": {
-          "_mean_abs_error": 0.1552106404546816,
+          "_mean_abs_error": 0.16440143611597666,
           "_mean_hypotheses": 6.0
         }
       }
