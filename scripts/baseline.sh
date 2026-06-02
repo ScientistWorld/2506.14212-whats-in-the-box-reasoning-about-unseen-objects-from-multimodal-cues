@@ -15,7 +15,7 @@
 
 set -e
 
-cd /home/user
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 SAMPLES="${SAMPLES:-1000}"
 SEED="${SEED:-17}"

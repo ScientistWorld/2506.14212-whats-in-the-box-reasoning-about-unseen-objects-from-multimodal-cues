@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-cd /home/user
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 bash scripts/evaluate_train.sh outputs
 bash scripts/evaluate_test.sh outputs

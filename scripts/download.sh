@@ -15,10 +15,13 @@
 # This script exists for future portability. The scaled benchmark is tracked in
 # git, so there is no external download required for this environment.
 
-set -e
+set -euo pipefail
 
-cd /home/user
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 # The original WiTB videos/human ratings are not publicly downloadable from the
 # paper. The scaled parsed benchmark used here is tracked in git under data/.
-test -f data/witb_parsed_benchmark.json
+if [ ! -f data/witb_parsed_benchmark.json ]; then
+  echo "Missing tracked benchmark file: data/witb_parsed_benchmark.json" >&2
+  exit 1
+fi

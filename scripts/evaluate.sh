@@ -22,7 +22,7 @@
 
 set -e
 
-cd /home/user
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 mkdir -p scoring
 
