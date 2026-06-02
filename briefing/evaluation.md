@@ -16,7 +16,7 @@ that the multimodal system beats both unimodal reference methods.
 
 ## Evaluation Protocol
 
-Methods write prediction artifacts to `outputs/witb_*_predictions.json`. Each
+Methods write prediction artifacts to `outputs/*_predictions.json`. Each
 artifact must contain per-scenario object-in-left-box probabilities. Run
 `bash scripts/evaluate.sh outputs data/witb_parsed_benchmark.json` to write
 `scoring/scores.json`. Evaluation code must not call into `method/`; it only

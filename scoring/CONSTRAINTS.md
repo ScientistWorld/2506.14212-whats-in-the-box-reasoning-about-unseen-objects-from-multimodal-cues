@@ -9,7 +9,7 @@ then report them under `witb_human_alignment`.
 ## Outputs
 
 Submissions must write object-in-left-box probabilities in the same JSON format
-used by `outputs/witb_*_predictions.json`. The evaluator must remain
+used by the existing `outputs/*_predictions.json` artifacts. The evaluator must remain
 method-agnostic and must not import from `method/`.
 
 ## Resource Scaling

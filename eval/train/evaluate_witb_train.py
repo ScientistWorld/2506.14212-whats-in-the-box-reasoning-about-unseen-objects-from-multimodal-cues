@@ -26,6 +26,11 @@ METHOD_MAP = {
     "witb_vision": "vision_only_ablation",
     "uniform_chance": "uniform_chance_baseline",
 }
+SPLIT_DIAGNOSTIC_METHODS = {
+    "audio_only_ablation",
+    "vision_only_ablation",
+    "uniform_chance_baseline",
+}
 
 
 def pearson(xs: list[float], ys: list[float]) -> float:
@@ -165,17 +170,21 @@ def prediction_paths(predictions_dir: Path) -> list[Path]:
 
 
 def split_scored_methods(results: dict[str, dict[str, float]]) -> list[str]:
-    """Expose paper-comparable split scores only for the main method.
+    """Expose split scores for candidate methods, not diagnostic baselines.
 
     The train/test slices are small held-out diagnostics, not paper-level
-    ablation reproductions. Unimodal artifacts are still read below to compute
-    gain metrics for the main method, but leaving them in split results makes
-    the validator compare tiny-slice baseline correlations against full-paper
-    baseline numbers.
+    ablation reproductions. Known reference baselines are still read below to
+    compute gain metrics, but leaving them in split results makes the validator
+    compare tiny-slice baseline correlations against full-paper baseline
+    numbers. Any new non-baseline prediction artifact is scored automatically.
     """
-    if "full_neurosymbolic" not in results:
-        raise SystemExit("Missing full_neurosymbolic prediction artifact")
-    return ["full_neurosymbolic"]
+    methods = sorted(
+        method for method in results
+        if method not in SPLIT_DIAGNOSTIC_METHODS
+    )
+    if not methods:
+        raise SystemExit("No candidate method prediction artifacts found")
+    return methods
 
 
 def main() -> None:

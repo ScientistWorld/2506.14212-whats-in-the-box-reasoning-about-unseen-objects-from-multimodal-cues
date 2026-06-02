@@ -25,6 +25,11 @@ METHOD_MAP = {
     "witb_vision": "vision_only_ablation",
     "uniform_chance": "uniform_chance_baseline",
 }
+SPLIT_DIAGNOSTIC_METHODS = {
+    "audio_only_ablation",
+    "vision_only_ablation",
+    "uniform_chance_baseline",
+}
 
 
 def pearson(xs: list[float], ys: list[float]) -> float:
@@ -103,9 +108,13 @@ def split_scored_methods(
         if missing:
             raise SystemExit(f"Missing prediction artifacts for train-scored methods: {missing}")
         return sorted(required_methods)
-    if "full_neurosymbolic" not in results:
-        raise SystemExit("Missing full_neurosymbolic prediction artifact")
-    return ["full_neurosymbolic"]
+    methods = sorted(
+        method for method in results
+        if method not in SPLIT_DIAGNOSTIC_METHODS
+    )
+    if not methods:
+        raise SystemExit("No candidate method prediction artifacts found")
+    return methods
 
 
 def flatten_prediction(

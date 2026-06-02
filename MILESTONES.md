@@ -39,5 +39,10 @@
 - Hardened the main evaluator against duplicate scenarios, missing objects, and non-finite or out-of-range probabilities.
 - Re-ran `scripts/reproduce.sh`, split evaluations, and `python validate.py --compare`; all checks passed locally.
 
+### [2026-06-02 14:05] - secondary_claims
+- Final verification kept the `secondary_claims` milestone.
+- Made train/test split scoring reusable for future non-baseline method artifact names.
+- Confirmed `python validate.py --compare` passes and documented the remaining limitation: the benchmark is a small parsed substitute for unreleased WiTB data.
+
 ## Stop Justification
 - Completed at milestone `secondary_claims`.

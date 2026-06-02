@@ -1,6 +1,6 @@
 # The system reads this file after the turn ends.
-action: submit
+action: done
 gpus: 0
-test: true
+test: false
 milestone: secondary_claims
-notes: "CPU test job to verify the refreshed evaluator, neutral diagnostic baseline, split scoring, and validate.py --compare path on the scaled parsed WiTB benchmark."
+notes: "Final verification passed after making train/test split scoring reusable for future method artifact names; workspace is ready as a scaled parsed WiTB gym."
