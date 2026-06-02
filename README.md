@@ -279,6 +279,41 @@ reads predictions and the benchmark targets.
 
 </details>
 
+### Iteration 8: gpt-5.5 (verifier)
+- **Milestone**: `secondary_claims` | **Status**: done
+- **Working time**: 7m | **GPU**: 0.0h
+- **Jobs**: 4 total (4 completed, 0 failed)
+
+<details>
+<summary>Progress Log</summary>
+
+### [2026-06-02 13:04] - core_claim
+- Verified the paper's Bayesian hypothesis algorithm runs end-to-end through `scripts/reproduce.sh`.
+- Prior compute job `2029a1ef-afb` completed successfully with `SAMPLES=1000` and `python validate.py --compare` passing.
+- Full neurosymbolic model reached `human_correlation = 0.983` on the scaled parsed benchmark, beating audio-only `0.796` and vision-only `0.678`.
+
+### [2026-06-02 13:07] - core_claim
+- Re-audited the continuation workspace after milestone reset.
+- Confirmed the implementation is the paper's explicit Bayesian hypothesis algorithm, evaluation remains method-independent, and `scripts/evaluate.sh` works standalone.
+- No public original WiTB code or dataset release was found, so `core_claim` remains the highest justified milestone for the packaged scaled benchmark.
+
+### [2026-06-02 13:10] - secondary_claims
+- Job `57d422b4-403` completed with exit code 0 and `python validate.py --compare` passing in the container.
+- Added and verified a late-fusion diagnostic for the paper's secondary claim that joint hypothesis inference is not simply averaging unimodal outputs.
+- Full joint inference reached `human_correlation = 0.983`; late fusion reached `0.940`, giving `gain_over_late_fusion = 0.044`.
+
+### [2026-06-02 13:28] - secondary_claims
+- Tightened the visual likelihood to match the paper's described rejection-sampling hit rate without extra smoothing or undocumented dimension shrinkage.
+- Expanded `scores.json` to include all declared calibration and within-scenario ranking metrics.
+- Local validation passed with full multi-cue inference at `human_correlation = 0.980`, `multimodal_gain_over_best_unimodal = 0.184`, and `gain_over_late_fusion = 0.055`.
+
+### [2026-06-02 13:40] - secondary_claims
+- Final verification confirmed method/data/evaluation separation, standalone scoring, train/test consistency, and no committed `shared/` dependencies.
+- Made final method-agnostic documentation and metric-name cleanup for the late-fusion comparison.
+- `python validate.py --compare` passes after the final verification edits.
+
+</details>
+
 
 ---
 
