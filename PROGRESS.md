@@ -5,7 +5,7 @@
 - Paper analysis is complete in `notes/paper_analysis.md` and `briefing/`.
 - A scaled parsed WiTB benchmark is tracked in `data/witb_parsed_benchmark.json`.
 - `method/witb_bayes.py` implements the paper's symbolic inference algorithm: non-empty placement enumeration, visual fit rejection sampling, audio evidence scoring, posterior normalization, and marginalization.
-- `baseline/witb_baselines.py` runs the paper's audio-only and vision-only ablations.
+- `baseline/witb_baselines.py` runs the paper's audio-only Eq. 3 ablation and the vision-only geometric ablation.
 - `scripts/reproduce.sh` writes prediction artifacts and `scripts/evaluate.sh` scores them without importing from `method/`.
 - `python validate.py --compare` passes on reduced-sample smoke-test outputs.
 
@@ -14,8 +14,9 @@
 Configured job result (`SAMPLES=1000`, job `abff144f-319`, exit code 0):
 
 - Full neurosymbolic: `human_correlation = 0.983`
-- Audio-only ablation: `human_correlation = 0.804`
+- Audio-only ablation: `human_correlation = 0.796`
 - Vision-only ablation: `human_correlation = 0.678`
+- Multimodal gain over best unimodal: `0.187`
 
 The full method beats both unimodal ablations, supporting the paper's core
 claim on the scaled parsed benchmark.

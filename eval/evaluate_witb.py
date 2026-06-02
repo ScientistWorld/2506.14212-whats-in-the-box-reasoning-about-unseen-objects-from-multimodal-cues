@@ -73,6 +73,13 @@ def main() -> None:
         diagnostics[method] = {k: v for k, v in metrics.items() if k.startswith("_")}
     if not results:
         raise SystemExit(f"No prediction files found in {args.predictions_dir}")
+    full = results.get("full_neurosymbolic", {}).get("human_correlation")
+    unimodal = [
+        results.get("audio_only_ablation", {}).get("human_correlation"),
+        results.get("vision_only_ablation", {}).get("human_correlation"),
+    ]
+    if full is not None and all(x is not None for x in unimodal):
+        results["full_neurosymbolic"]["multimodal_gain_over_best_unimodal"] = full - max(unimodal)
     payload = {
         "experiments": {
             "witb_human_alignment": {

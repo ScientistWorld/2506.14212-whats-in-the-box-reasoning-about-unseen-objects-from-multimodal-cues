@@ -113,7 +113,7 @@ Recommended benchmark scores:
 - `full_human_corr`: Pearson r for the full model.
 - `audio_only_human_corr`: Pearson r for the CLAP-only ablation.
 - `vision_only_human_corr`: Pearson r for the geometry-only ablation.
-- `multimodal_gain_over_best_unimodal`: full correlation minus max(audio-only, vision-only).
+- `multimodal_gain_over_best_unimodal`: full correlation minus max(audio-only, vision-only). The paper reference value is `0.23`.
 - `hypothesis_validity`: fraction of evaluated examples where posterior mass is normalized and all per-object box probabilities sum to 1.
 
 Milestone guidance:
