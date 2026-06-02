@@ -3,4 +3,4 @@ action: done
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: "3/2 scenario train/test split; 18 train metric values and 18 test metric values populated from job b2e5e153-324. Full method train/test correlation 0.987/0.980, MAE 0.106/0.132, Brier 0.013/0.019; multimodal gain narrows on test 0.253->0.047. Caveats: tiny split, within-scenario rank partly saturated, and data file still exposes held-out human targets."
+notes: "3/2 scenario train/test split; 18 train metric values and 18 test metric values populated from job b2e5e153-324. Full method train/test correlation 0.987/0.980, MAE 0.106/0.132, Brier 0.013/0.019; multimodal gain narrows on test 0.253->0.047. Reference baseline paper primary values omitted so validator does not compare tiny-slice baseline correlations to the unreleased 20-stimulus paper aggregate. Caveats: tiny split, within-scenario rank partly saturated, and data file still exposes held-out human targets."

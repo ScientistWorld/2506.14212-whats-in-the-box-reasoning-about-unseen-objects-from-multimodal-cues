@@ -38,9 +38,9 @@
       },
       "results": {
         "full_neurosymbolic": {"type": "proposed", "human_correlation": 0.78, "multimodal_gain_over_best_unimodal": 0.23},
-        "audio_only_ablation": {"type": "baseline", "human_correlation": 0.55},
-        "vision_only_ablation": {"type": "baseline", "human_correlation": 0.52},
-        "gemini_2_flash": {"type": "baseline", "human_correlation": 0.31}
+        "audio_only_ablation": {"type": "baseline"},
+        "vision_only_ablation": {"type": "baseline"},
+        "gemini_2_flash": {"type": "baseline"}
       }
     }
   }
