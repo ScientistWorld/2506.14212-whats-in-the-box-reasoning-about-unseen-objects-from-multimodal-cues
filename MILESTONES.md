@@ -1,6 +1,6 @@
 # Reproduction Milestones
 
-**Current: core_claim**
+**Current: secondary_claims**
 
 ## Progress Log
 
@@ -14,6 +14,11 @@
 - Confirmed the implementation is the paper's explicit Bayesian hypothesis algorithm, evaluation remains method-independent, and `scripts/evaluate.sh` works standalone.
 - No public original WiTB code or dataset release was found, so `core_claim` remains the highest justified milestone for the packaged scaled benchmark.
 
+### [2026-06-02 13:10] - secondary_claims
+- Job `57d422b4-403` completed with exit code 0 and `python validate.py --compare` passing in the container.
+- Added and verified a late-fusion diagnostic for the paper's secondary claim that joint hypothesis inference is not simply averaging unimodal outputs.
+- Full joint inference reached `human_correlation = 0.983`; late fusion reached `0.940`, giving `joint_gain_over_late_fusion = 0.044`.
+
 ## Stop Justification
-- Completed at milestone `core_claim`.
+- Completed at milestone `secondary_claims`.
 - Exact Figure 3 reproduction is blocked by unreleased original WiTB videos, parsed neural outputs, and human ratings, so the packaged environment preserves the paper's algorithm on a scaled tracked benchmark.

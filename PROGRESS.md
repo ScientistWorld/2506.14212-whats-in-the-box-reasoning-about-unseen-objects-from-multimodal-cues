@@ -27,12 +27,11 @@ complete successfully, and each three-object/two-box scenario enumerates the
 paper-expected 6 non-empty placement hypotheses. A fresh web search found paper
 pages but no public code or full dataset release.
 
-Local secondary-claim extension added a late-fusion diagnostic computed only
-from audio-only and vision-only prediction artifacts. On the current outputs,
-late fusion reached `human_correlation = 0.940`, while full joint inference
-reached `0.983`, yielding `joint_gain_over_late_fusion = 0.044`. A CPU test job
-is being submitted to verify this path in the container before upgrading the
-milestone.
+Secondary-claim extension added a late-fusion diagnostic computed only from
+audio-only and vision-only prediction artifacts. Job `57d422b4-403` verified the
+path in the container with exit code 0 and `python validate.py --compare`
+passing. Late fusion reached `human_correlation = 0.940`, while full joint
+inference reached `0.983`, yielding `joint_gain_over_late_fusion = 0.044`.
 
 Previous compute job `abff144f-319` completed successfully before the audio-only
 baseline was corrected to the paper's Eq. 3 formula. Job `2029a1ef-afb`
@@ -54,7 +53,7 @@ Paper reported on its unreleased analysis set:
 ## Remaining
 
 - Higher milestones would require more of the original paper's evaluation surface: additional scenarios, a direct Gemini-style VLM baseline, or recovered original stimuli/human ratings.
-- The current environment is packaged and validated for the core claim.
+- The current environment is packaged and validated through the secondary late-fusion claim.
 
 ## Issues
 

@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: submit
+action: done
 gpus: 0
-test: true
-milestone: core_claim
-notes: "CPU test job to verify the new late-fusion secondary diagnostic in the container; current milestone remains core_claim until the job returns."
+test: false
+milestone: secondary_claims
+notes: "Job 57d422b4-403 verified core WiTB reproduction plus late-fusion secondary diagnostic; exact full-paper reproduction remains blocked by unreleased original stimuli and ratings."
