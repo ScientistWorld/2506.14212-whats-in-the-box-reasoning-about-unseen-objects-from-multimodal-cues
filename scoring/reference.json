@@ -6,7 +6,8 @@
       "primary_metric": "human_correlation",
       "metrics": {
         "human_correlation": {"higher_is_better": true, "coefficient": 1.0},
-        "multimodal_gain_over_best_unimodal": {"higher_is_better": true, "coefficient": 0.5}
+        "multimodal_gain_over_best_unimodal": {"higher_is_better": true, "coefficient": 0.5},
+        "joint_gain_over_late_fusion": {"higher_is_better": true, "coefficient": 0.3}
       },
       "results": {
         "full_neurosymbolic": {"type": "proposed", "human_correlation": 0.78, "multimodal_gain_over_best_unimodal": 0.23},

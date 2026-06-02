@@ -7,7 +7,8 @@
         },
         "full_neurosymbolic": {
           "human_correlation": 0.9834123620578347,
-          "multimodal_gain_over_best_unimodal": 0.1869965537461613
+          "multimodal_gain_over_best_unimodal": 0.1869965537461613,
+          "joint_gain_over_late_fusion": 0.04379425588131569
         },
         "vision_only_ablation": {
           "human_correlation": 0.6776358352836249
@@ -25,6 +26,10 @@
         "vision_only_ablation": {
           "_mean_abs_error": 0.16440143611597666,
           "_mean_hypotheses": 6.0
+        },
+        "late_fusion_average": {
+          "_human_correlation": 0.939618106176519,
+          "_mean_abs_error": 0.07072867490797306
         }
       }
     }

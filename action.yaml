@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: done
+action: submit
 gpus: 0
-test: false
+test: true
 milestone: core_claim
-notes: "Continuation audit restored core_claim: faithful Bayesian WiTB method, standalone evaluation passes, prior compute job 2029a1ef-afb validated the 1000-sample run."
+notes: "CPU test job to verify the new late-fusion secondary diagnostic in the container; current milestone remains core_claim until the job returns."

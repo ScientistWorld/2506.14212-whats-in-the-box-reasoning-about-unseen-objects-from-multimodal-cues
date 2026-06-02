@@ -8,3 +8,8 @@ experiment also includes single-cue reference outputs so the benchmark measures
 whether using multiple cue types improves alignment rather than simply solving a
 unimodal version of the task. The reported gain metric summarizes whether the
 main system exceeds the better of the two single-cue references.
+
+The same experiment also reports a secondary diagnostic comparing the main
+system against a simple average of the audio-only and vision-only predictions.
+This checks whether joint hidden-placement inference adds value beyond late
+fusion of already marginalized unimodal judgments.

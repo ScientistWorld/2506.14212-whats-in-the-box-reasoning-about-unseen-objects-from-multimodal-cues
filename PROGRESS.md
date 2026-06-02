@@ -27,6 +27,13 @@ complete successfully, and each three-object/two-box scenario enumerates the
 paper-expected 6 non-empty placement hypotheses. A fresh web search found paper
 pages but no public code or full dataset release.
 
+Local secondary-claim extension added a late-fusion diagnostic computed only
+from audio-only and vision-only prediction artifacts. On the current outputs,
+late fusion reached `human_correlation = 0.940`, while full joint inference
+reached `0.983`, yielding `joint_gain_over_late_fusion = 0.044`. A CPU test job
+is being submitted to verify this path in the container before upgrading the
+milestone.
+
 Previous compute job `abff144f-319` completed successfully before the audio-only
 baseline was corrected to the paper's Eq. 3 formula. Job `2029a1ef-afb`
 verified the corrected code path in the container.

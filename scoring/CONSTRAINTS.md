@@ -25,3 +25,5 @@ structured cue estimates must be run before compute submission and documented.
 - [ ] `scoring/scores.json` is written by `scripts/evaluate.sh`.
 - [ ] Evaluation code does not import from `method/`.
 - [ ] Reported `witb_human_alignment` scores use the fixed benchmark targets.
+- [ ] The late-fusion diagnostic is computed from prediction artifacts, not by
+      rerunning or importing the paper method.
