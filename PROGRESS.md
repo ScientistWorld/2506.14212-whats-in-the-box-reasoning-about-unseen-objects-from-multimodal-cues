@@ -11,7 +11,7 @@
 
 ## Results
 
-Configured job result (`SAMPLES=1000`, job `abff144f-319`, exit code 0):
+Current corrected local validation (`SAMPLES=1000`, `python validate.py --compare` passed):
 
 - Full neurosymbolic: `human_correlation = 0.983`
 - Audio-only ablation: `human_correlation = 0.796`
@@ -20,6 +20,10 @@ Configured job result (`SAMPLES=1000`, job `abff144f-319`, exit code 0):
 
 The full method beats both unimodal ablations, supporting the paper's core
 claim on the scaled parsed benchmark.
+
+Previous compute job `abff144f-319` completed successfully before the audio-only
+baseline was corrected to the paper's Eq. 3 formula. A fresh CPU smoke test is
+being submitted to verify the corrected code path in the container.
 
 Earlier reduced-sample smoke test (`SAMPLES=50`) on the scaled parsed benchmark:
 
