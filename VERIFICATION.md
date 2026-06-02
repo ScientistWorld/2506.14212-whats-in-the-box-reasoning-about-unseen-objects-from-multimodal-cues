@@ -9,13 +9,15 @@ The workspace started at milestone `secondary_claims`. The claimed milestone is 
 - Minor: `scoring/EXPERIMENTS.md`, `scoring/TARGETS.md`, and `scoring/DIRECTION.md` contained wording that exposed the paper's internal inference framing in files intended to be method-agnostic or method-safe.
 - Minor: the top-level evaluator only discovered `witb_*_predictions.json`, which could silently ignore a future scientist's correctly formatted output with a different method prefix.
 - Minor: the late-fusion gain metric name used implementation-specific wording.
+- Minor: split-slice score files exposed tiny-slice unimodal ablation correlations as paper-comparable results, causing `python validate.py` to compare a two-scenario diagnostic baseline against the paper's full-benchmark baseline.
 
 ## Fixes Applied
 
 - Rewrote the method-agnostic documentation to describe the observable evaluation goal: multi-cue probability judgments should improve over single-cue methods and simple post-hoc averaging.
 - Broadened `eval/evaluate_witb.py` to score any `*_predictions.json` artifact in the output directory, matching the train/test evaluator interface.
 - Renamed `joint_gain_over_late_fusion` to `gain_over_late_fusion` across evaluators, reference scores, reproduced scores, and documentation.
-- Re-ran `bash scripts/evaluate.sh`, `bash scripts/evaluate_train.sh`, `bash scripts/evaluate_test.sh`, and `python validate.py --compare`; all checks passed.
+- Updated train/test evaluators so split files score the main proposed method while retaining ablation artifacts as diagnostics for gain calculations.
+- Re-ran `bash scripts/evaluate.sh`, `bash scripts/evaluate_train.sh`, `bash scripts/evaluate_test.sh`, `python validate.py`, and `python validate.py --compare`; all checks passed.
 
 ## Final Judgment
 

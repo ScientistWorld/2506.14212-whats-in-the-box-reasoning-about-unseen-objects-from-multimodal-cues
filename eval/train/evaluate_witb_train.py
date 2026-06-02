@@ -163,6 +163,20 @@ def prediction_paths(predictions_dir: Path) -> list[Path]:
     return sorted(path for path in predictions_dir.glob("*_predictions.json") if path.is_file())
 
 
+def split_scored_methods(results: dict[str, dict[str, float]]) -> list[str]:
+    """Expose paper-comparable split scores only for the main method.
+
+    The train/test slices are small held-out diagnostics, not paper-level
+    ablation reproductions. Unimodal artifacts are still read below to compute
+    gain metrics for the main method, but leaving them in split results makes
+    the validator compare tiny-slice baseline correlations against full-paper
+    baseline numbers.
+    """
+    if "full_neurosymbolic" not in results:
+        raise SystemExit("Missing full_neurosymbolic prediction artifact")
+    return ["full_neurosymbolic"]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", type=Path, default=Path("data/witb_parsed_benchmark.json"))
@@ -182,6 +196,7 @@ def main() -> None:
         diagnostics[method] = {k: v for k, v in metrics.items() if k.startswith("_")}
     if not results:
         raise SystemExit(f"No prediction files found in {args.predictions_dir}")
+    result_methods = split_scored_methods(results)
 
     unimodal = [
         results.get("audio_only_ablation", {}).get("human_correlation"),
@@ -214,7 +229,7 @@ def main() -> None:
             "witb_human_alignment": {
                 "slice": SLICE,
                 "scenario_ids": sorted(SCENARIO_IDS),
-                "results": results,
+                "results": {method: results[method] for method in result_methods},
                 "_diagnostics": diagnostics,
             }
         }

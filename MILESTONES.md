@@ -29,5 +29,10 @@
 - Made final method-agnostic documentation and metric-name cleanup for the late-fusion comparison.
 - `python validate.py --compare` passes after the final verification edits.
 
+### [2026-06-02 13:52] - secondary_claims
+- Fixed a validator failure where split-slice unimodal diagnostics were being compared against full-paper baseline correlations.
+- Train/test score files now expose the paper-comparable proposed method result and keep ablation artifacts only as diagnostics for gain metrics.
+- `python validate.py` passes after regenerating `scores_train.json` and `scores_test.json`.
+
 ## Stop Justification
 - Completed at milestone `secondary_claims`.

@@ -88,6 +88,25 @@ def load_train_methods(train_scores: Path) -> set[str] | None:
     return set(methods)
 
 
+def split_scored_methods(
+    results: dict[str, dict[str, float]], required_methods: set[str] | None
+) -> list[str]:
+    """Return method keys for held-out split scoring.
+
+    The split files are used as anti-shortcut diagnostics over a small fixed
+    scenario slice. They should mirror the train-slice method keys, while
+    ablation artifacts remain diagnostics for computing gain metrics.
+    """
+    if required_methods is not None:
+        missing = sorted(required_methods - results.keys())
+        if missing:
+            raise SystemExit(f"Missing prediction artifacts for train-scored methods: {missing}")
+        return sorted(required_methods)
+    if "full_neurosymbolic" not in results:
+        raise SystemExit("Missing full_neurosymbolic prediction artifact")
+    return ["full_neurosymbolic"]
+
+
 def flatten_prediction(
     pred: dict, targets: dict[str, dict[str, float]]
 ) -> tuple[list[float], list[float], list[float], list[tuple[list[float], list[float]]]]:
@@ -195,13 +214,7 @@ def main() -> None:
     if not all_results:
         raise SystemExit(f"No prediction files found in {args.predictions_dir}")
 
-    if required_methods is not None:
-        missing = sorted(required_methods - all_results.keys())
-        if missing:
-            raise SystemExit(f"Missing prediction artifacts for train-scored methods: {missing}")
-        result_methods = sorted(required_methods)
-    else:
-        result_methods = sorted(all_results)
+    result_methods = split_scored_methods(all_results, required_methods)
 
     unimodal = [
         all_results.get("audio_only_ablation", {}).get("human_correlation"),
