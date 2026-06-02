@@ -1,5 +1,6 @@
 #!/bin/bash
-# Regenerate predictions, then score full, visible train, and held-out test slices.
+# Regenerate method, ablation, and diagnostic predictions, then score the full,
+# visible train, and held-out test slices.
 
 set -euo pipefail
 

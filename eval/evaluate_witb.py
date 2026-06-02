@@ -13,7 +13,9 @@ METHOD_MAP = {
     "witb_full": "full_neurosymbolic",
     "witb_audio": "audio_only_ablation",
     "witb_vision": "vision_only_ablation",
+    "uniform_chance": "uniform_chance_baseline",
 }
+DIAGNOSTIC_ONLY_METHODS = {"uniform_chance_baseline"}
 
 
 def pearson(xs: list[float], ys: list[float]) -> float:
@@ -68,11 +70,30 @@ def flatten_prediction(pred: dict, targets: dict[str, dict[str, float]]) -> tupl
     pred_values = []
     target_values = []
     hyp_counts = []
-    for scenario in pred["scenarios"]:
-        sid = scenario["scenario_id"]
+    scenario_ids = [scenario["scenario_id"] for scenario in pred["scenarios"]]
+    duplicates = sorted({sid for sid in scenario_ids if scenario_ids.count(sid) > 1})
+    if duplicates:
+        method = pred.get("method", "<unknown>")
+        raise SystemExit(f"{method} predictions contain duplicate scenarios: {duplicates}")
+    by_id = {scenario["scenario_id"]: scenario for scenario in pred["scenarios"]}
+    missing = sorted(set(targets) - by_id.keys())
+    if missing:
+        method = pred.get("method", "<unknown>")
+        raise SystemExit(f"{method} predictions are missing scenarios: {missing}")
+    for sid in sorted(targets):
+        scenario = by_id[sid]
         hyp_counts.append(float(scenario.get("num_hypotheses", 0)))
         for obj_name, target in targets[sid].items():
-            pred_values.append(float(scenario["pred_left_prob"][obj_name]))
+            if obj_name not in scenario.get("pred_left_prob", {}):
+                method = pred.get("method", "<unknown>")
+                raise SystemExit(f"{method} predictions for {sid} are missing object {obj_name!r}")
+            value = float(scenario["pred_left_prob"][obj_name])
+            if not math.isfinite(value) or value < 0.0 or value > 1.0:
+                method = pred.get("method", "<unknown>")
+                raise SystemExit(
+                    f"{method} prediction for {sid}/{obj_name} must be a finite probability in [0, 1]"
+                )
+            pred_values.append(value)
             target_values.append(float(target))
     return pred_values, target_values, hyp_counts
 
@@ -142,8 +163,16 @@ def main() -> None:
         pred = json.loads(path.read_text())
         method, metrics = evaluate_payload(pred, targets)
         payloads[method] = pred
-        results[method] = {k: v for k, v in metrics.items() if not k.startswith("_")}
-        diagnostics[method] = {k: v for k, v in metrics.items() if k.startswith("_")}
+        public_metrics = {k: v for k, v in metrics.items() if not k.startswith("_")}
+        private_metrics = {k: v for k, v in metrics.items() if k.startswith("_")}
+        if method in DIAGNOSTIC_ONLY_METHODS:
+            diagnostics[method] = {
+                **{f"_{k}": v for k, v in public_metrics.items()},
+                **private_metrics,
+            }
+        else:
+            results[method] = public_metrics
+            diagnostics[method] = private_metrics
     if not results:
         raise SystemExit(f"No prediction files found in {args.predictions_dir}")
     full = results.get("full_neurosymbolic", {}).get("human_correlation")

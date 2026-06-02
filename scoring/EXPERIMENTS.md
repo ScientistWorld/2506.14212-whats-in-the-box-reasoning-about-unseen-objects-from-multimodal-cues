@@ -13,3 +13,7 @@ The same experiment also reports a secondary diagnostic comparing the main
 system against a simple average of the audio-only and vision-only predictions.
 This checks whether a multi-cue system adds value beyond post-hoc averaging of
 single-cue probability judgments.
+
+A neutral constant-probability diagnostic is included to show that the scaled
+benchmark has room below the paper ablations. It is not compared to a paper
+number because the paper did not report this baseline.

@@ -14,6 +14,32 @@ sys.path.insert(0, str(ROOT / "method"))
 from witb_bayes import run  # noqa: E402
 
 
+def run_uniform_baseline(data_path: Path, output_path: Path, seed: int) -> None:
+    """Write a non-informative 0.5 probability for every two-box query."""
+    data = json.loads(data_path.read_text())
+    scenarios = []
+    for scenario in data["scenarios"]:
+        pred_left_prob = {obj["name"]: 0.5 for obj in scenario["objects"]}
+        scenarios.append(
+            {
+                "scenario_id": scenario["id"],
+                "mode": "uniform",
+                "pred_left_prob": pred_left_prob,
+                "num_hypotheses": 0,
+            }
+        )
+    payload = {
+        "method": "uniform_chance",
+        "mode": "uniform",
+        "data_path": str(data_path),
+        "samples": 0,
+        "seed": seed,
+        "scenarios": scenarios,
+    }
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(payload, indent=2) + "\n")
+
+
 def run_audio_only(data_path: Path, output_path: Path, seed: int) -> None:
     """Run the paper's Eq. 3 audio-only ablation.
 
@@ -55,13 +81,17 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, default=Path("outputs"))
     parser.add_argument("--samples", type=int, default=1000)
     parser.add_argument("--seed", type=int, default=17)
-    parser.add_argument("--which", choices=["audio", "vision", "all"], default="all")
+    parser.add_argument("--which", choices=["audio", "vision", "uniform", "all"], default="all")
     args = parser.parse_args()
-    modes = ["audio", "vision"] if args.which == "all" else [args.which]
+    modes = ["audio", "vision", "uniform"] if args.which == "all" else [args.which]
     for mode in modes:
-        output_path = args.output_dir / f"witb_{mode}_predictions.json"
+        output_path = args.output_dir / (
+            "uniform_chance_predictions.json" if mode == "uniform" else f"witb_{mode}_predictions.json"
+        )
         if mode == "audio":
             run_audio_only(args.data, output_path, args.seed)
+        elif mode == "uniform":
+            run_uniform_baseline(args.data, output_path, args.seed)
         else:
             run(args.data, output_path, mode, args.samples, args.seed)
 

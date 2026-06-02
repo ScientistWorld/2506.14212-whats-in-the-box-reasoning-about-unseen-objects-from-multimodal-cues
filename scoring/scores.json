@@ -24,6 +24,13 @@
         }
       },
       "_diagnostics": {
+        "uniform_chance_baseline": {
+          "_human_correlation": 0.0,
+          "_mean_absolute_error": 0.21933333333333332,
+          "_brier_score": 0.061180000000000005,
+          "_within_scenario_rank_accuracy": 0.5,
+          "_mean_hypotheses": 0.0
+        },
         "audio_only_ablation": {
           "_mean_hypotheses": 0.0
         },

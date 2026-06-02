@@ -18,6 +18,10 @@
         }
       },
       "_diagnostics": {
+        "uniform_chance_baseline": {
+          "_mean_hypotheses": 0.0,
+          "_num_scenarios": 3.0
+        },
         "audio_only_ablation": {
           "_mean_hypotheses": 0.0,
           "_num_scenarios": 3.0

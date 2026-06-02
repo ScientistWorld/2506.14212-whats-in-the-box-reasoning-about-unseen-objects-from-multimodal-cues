@@ -34,5 +34,10 @@
 - Train/test score files now expose the paper-comparable proposed method result and keep ablation artifacts only as diagnostics for gain metrics.
 - `python validate.py` passes after regenerating `scores_train.json` and `scores_test.json`.
 
+### [2026-06-02 13:59] - secondary_claims
+- Added a neutral uniform-probability diagnostic baseline to document that the scaled parsed benchmark is non-trivial.
+- Hardened the main evaluator against duplicate scenarios, missing objects, and non-finite or out-of-range probabilities.
+- Re-ran `scripts/reproduce.sh`, split evaluations, and `python validate.py --compare`; all checks passed locally.
+
 ## Stop Justification
 - Completed at milestone `secondary_claims`.

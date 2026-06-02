@@ -24,6 +24,7 @@ METHOD_MAP = {
     "witb_full": "full_neurosymbolic",
     "witb_audio": "audio_only_ablation",
     "witb_vision": "vision_only_ablation",
+    "uniform_chance": "uniform_chance_baseline",
 }
 
 

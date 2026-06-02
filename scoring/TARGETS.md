@@ -17,6 +17,15 @@ outputs using the same scenario inputs and target judgments.
 - **Metric**: `multimodal_gain_over_best_unimodal` for `full_neurosymbolic` (higher is better; paper reference is `0.78 - max(0.55, 0.52) = 0.23`)
 - **Run**: `bash scripts/reproduce.sh`
 
+The evaluator also reports `_diagnostics.uniform_chance_baseline` as a
+non-informative reference. This diagnostic is not a paper-reported baseline, but
+it checks that the scaled parsed benchmark is not solved by constant object
+location probabilities.
+
+The auxiliary `scores_train.json` and `scores_test.json` files are split-slice
+diagnostics for the main method; the paper-comparable ablation constraint is
+scored in `scores.json`.
+
 ## Secondary: multi_cue_vs_late_fusion
 
 The benchmark should distinguish integrated multi-cue reasoning from a simple

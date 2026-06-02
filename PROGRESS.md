@@ -38,8 +38,14 @@ The current local reproduction reaches:
 - Full neurosymbolic: `human_correlation = 0.980`, `brier_score = 0.016`, `within_scenario_rank_accuracy = 1.000`
 - Audio-only ablation: `human_correlation = 0.796`, `brier_score = 0.027`, `within_scenario_rank_accuracy = 0.933`
 - Vision-only ablation: `human_correlation = 0.630`, `brier_score = 0.044`, `within_scenario_rank_accuracy = 0.800`
+- Uniform chance diagnostic: `human_correlation = 0.000`, `brier_score = 0.061`, `within_scenario_rank_accuracy = 0.500`
 - Multimodal gain over best unimodal: `0.184`
 - Late-fusion correlation: `0.926`; joint gain over late fusion: `0.055`
+
+On 2026-06-02, an additional web search found the arXiv page and paper index
+pages, but no public code repository or full WiTB dataset release. The
+benchmark therefore remains a scaled parsed reproduction rather than an exact
+rerun of the unreleased 20-stimulus human evaluation.
 
 Previous compute job `abff144f-319` completed successfully before the audio-only
 baseline was corrected to the paper's Eq. 3 formula. Job `2029a1ef-afb`
