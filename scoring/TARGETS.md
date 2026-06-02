@@ -17,12 +17,12 @@ outputs using the same scenario inputs and target judgments.
 - **Metric**: `multimodal_gain_over_best_unimodal` for `full_neurosymbolic` (higher is better; paper reference is `0.78 - max(0.55, 0.52) = 0.23`)
 - **Run**: `bash scripts/reproduce.sh`
 
-## Secondary: joint_vs_late_fusion
+## Secondary: multi_cue_vs_late_fusion
 
-The paper emphasizes that the full model performs joint inference over object
-placements before marginalizing, rather than simply averaging unimodal
-probabilities. The evaluator therefore computes a late-fusion average from the
-audio-only and vision-only artifacts and reports the full model's gain over it.
-- **Metric**: `joint_gain_over_late_fusion` for `full_neurosymbolic` (higher is better)
+The benchmark should distinguish integrated multi-cue reasoning from a simple
+post-hoc average of single-cue probabilities. The evaluator therefore computes
+a late-fusion average from the audio-only and vision-only artifacts and reports
+the main system's gain over it.
+- **Metric**: `gain_over_late_fusion` for `full_neurosymbolic` (higher is better)
 - **Diagnostic**: `_diagnostics.late_fusion_average._human_correlation`
 - **Run**: `bash scripts/evaluate.sh outputs data/witb_parsed_benchmark.json`

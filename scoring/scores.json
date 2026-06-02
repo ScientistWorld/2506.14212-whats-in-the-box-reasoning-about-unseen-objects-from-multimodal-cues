@@ -14,7 +14,7 @@
           "brier_score": 0.01626481705999496,
           "within_scenario_rank_accuracy": 1.0,
           "multimodal_gain_over_best_unimodal": 0.1837423217778651,
-          "joint_gain_over_late_fusion": 0.0546261572358433
+          "gain_over_late_fusion": 0.0546261572358433
         },
         "vision_only_ablation": {
           "human_correlation": 0.6299869621907502,

@@ -15,9 +15,9 @@ which objects are hidden where.
 
 ## Approach Scope
 
-Scientists may improve cue estimates, uncertainty calibration, hypothesis
-scoring, geometric reasoning, or probabilistic fusion as long as the output is a
-distribution over object placements for the same WiTB-style inputs.
+Scientists may improve cue estimates, uncertainty calibration, physical
+compatibility judgments, or multi-cue probability estimation as long as the
+output is a distribution over object placements for the same WiTB-style inputs.
 
 ## Out of Bounds
 

@@ -1,6 +1,6 @@
 # The system reads this file after the turn ends.
-action: submit
+action: done
 gpus: 0
-test: true
+test: false
 milestone: secondary_claims
-notes: "CPU container test: regenerate WiTB predictions, evaluate full/train/test slices, and run validate.py --compare after scoring-contract and method-likelihood fixes."
+notes: "Final verification passed; documentation, scoring, train/test artifacts, and method-independent evaluation are ready for gym use on the scaled parsed benchmark."

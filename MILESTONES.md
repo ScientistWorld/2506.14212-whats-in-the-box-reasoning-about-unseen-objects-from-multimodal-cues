@@ -17,12 +17,17 @@
 ### [2026-06-02 13:10] - secondary_claims
 - Job `57d422b4-403` completed with exit code 0 and `python validate.py --compare` passing in the container.
 - Added and verified a late-fusion diagnostic for the paper's secondary claim that joint hypothesis inference is not simply averaging unimodal outputs.
-- Full joint inference reached `human_correlation = 0.983`; late fusion reached `0.940`, giving `joint_gain_over_late_fusion = 0.044`.
+- Full joint inference reached `human_correlation = 0.983`; late fusion reached `0.940`, giving `gain_over_late_fusion = 0.044`.
 
 ### [2026-06-02 13:28] - secondary_claims
 - Tightened the visual likelihood to match the paper's described rejection-sampling hit rate without extra smoothing or undocumented dimension shrinkage.
 - Expanded `scores.json` to include all declared calibration and within-scenario ranking metrics.
-- Local validation passed with full joint inference at `human_correlation = 0.980`, `multimodal_gain_over_best_unimodal = 0.184`, and `joint_gain_over_late_fusion = 0.055`.
+- Local validation passed with full multi-cue inference at `human_correlation = 0.980`, `multimodal_gain_over_best_unimodal = 0.184`, and `gain_over_late_fusion = 0.055`.
+
+### [2026-06-02 13:40] - secondary_claims
+- Final verification confirmed method/data/evaluation separation, standalone scoring, train/test consistency, and no committed `shared/` dependencies.
+- Made final method-agnostic documentation and metric-name cleanup for the late-fusion comparison.
+- `python validate.py --compare` passes after the final verification edits.
 
 ## Stop Justification
 - Completed at milestone `secondary_claims`.

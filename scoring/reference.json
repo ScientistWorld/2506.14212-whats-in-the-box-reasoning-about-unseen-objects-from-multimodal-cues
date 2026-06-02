@@ -30,7 +30,7 @@
           "coefficient": 0.5,
           "description": "Improvement in human-correlation score over the stronger of the audio-only and vision-only artifacts."
         },
-        "joint_gain_over_late_fusion": {
+        "gain_over_late_fusion": {
           "higher_is_better": true,
           "coefficient": 0.3,
           "description": "Improvement in human-correlation score over a simple average of audio-only and vision-only probabilities."

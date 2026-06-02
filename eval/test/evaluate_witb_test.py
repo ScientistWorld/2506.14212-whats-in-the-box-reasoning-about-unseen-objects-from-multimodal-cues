@@ -227,7 +227,7 @@ def main() -> None:
         }
         for method, metrics in all_results.items():
             if method not in {"audio_only_ablation", "vision_only_ablation"}:
-                metrics["joint_gain_over_late_fusion"] = metrics["human_correlation"] - late_corr
+                metrics["gain_over_late_fusion"] = metrics["human_correlation"] - late_corr
 
     results = {method: all_results[method] for method in result_methods}
     diagnostics = {

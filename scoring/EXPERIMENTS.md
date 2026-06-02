@@ -11,5 +11,5 @@ main system exceeds the better of the two single-cue references.
 
 The same experiment also reports a secondary diagnostic comparing the main
 system against a simple average of the audio-only and vision-only predictions.
-This checks whether joint hidden-placement inference adds value beyond late
-fusion of already marginalized unimodal judgments.
+This checks whether a multi-cue system adds value beyond post-hoc averaging of
+single-cue probability judgments.

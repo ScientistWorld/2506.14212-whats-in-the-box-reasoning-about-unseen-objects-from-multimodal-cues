@@ -138,7 +138,7 @@ def main() -> None:
     results = {}
     diagnostics = {}
     payloads = {}
-    for path in sorted(args.predictions_dir.glob("witb_*_predictions.json")):
+    for path in sorted(args.predictions_dir.glob("*_predictions.json")):
         pred = json.loads(path.read_text())
         method, metrics = evaluate_payload(pred, targets)
         payloads[method] = pred
@@ -165,7 +165,7 @@ def main() -> None:
             "_brier_score": late_metrics["brier_score"],
             "_within_scenario_rank_accuracy": late_metrics["within_scenario_rank_accuracy"],
         }
-        results["full_neurosymbolic"]["joint_gain_over_late_fusion"] = full - late_corr
+        results["full_neurosymbolic"]["gain_over_late_fusion"] = full - late_corr
     payload = {
         "experiments": {
             "witb_human_alignment": {

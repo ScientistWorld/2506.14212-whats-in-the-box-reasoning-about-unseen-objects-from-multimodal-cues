@@ -207,7 +207,7 @@ def main() -> None:
         }
         for method, metrics in results.items():
             if method not in {"audio_only_ablation", "vision_only_ablation"}:
-                metrics["joint_gain_over_late_fusion"] = metrics["human_correlation"] - late_corr
+                metrics["gain_over_late_fusion"] = metrics["human_correlation"] - late_corr
 
     payload = {
         "experiments": {
