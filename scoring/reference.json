@@ -5,10 +5,36 @@
       "weight": 1.0,
       "primary_metric": "human_correlation",
       "metrics": {
-        "human_correlation": {"higher_is_better": true, "coefficient": 1.0},
-        "mean_absolute_error": {"higher_is_better": false, "coefficient": 0.4, "description": "Mean absolute probability error against human object-left ratings; catches methods that preserve rank order but miscalibrate probabilities."},
-        "multimodal_gain_over_best_unimodal": {"higher_is_better": true, "coefficient": 0.5},
-        "joint_gain_over_late_fusion": {"higher_is_better": true, "coefficient": 0.3}
+        "human_correlation": {
+          "higher_is_better": true,
+          "coefficient": 1.0,
+          "description": "Correlation between method object-left probabilities and human object-left ratings."
+        },
+        "mean_absolute_error": {
+          "higher_is_better": false,
+          "coefficient": -0.35,
+          "description": "Mean absolute probability error against human object-left ratings; catches methods that preserve rank order but miscalibrate probabilities."
+        },
+        "brier_score": {
+          "higher_is_better": false,
+          "coefficient": -0.25,
+          "description": "Mean squared probability error against human object-left ratings; penalizes overconfident probability mistakes more strongly than MAE."
+        },
+        "within_scenario_rank_accuracy": {
+          "higher_is_better": true,
+          "coefficient": 0.35,
+          "description": "Pairwise ranking accuracy among objects within each scenario; catches global correlation shortcuts that miss scenario-local judgments."
+        },
+        "multimodal_gain_over_best_unimodal": {
+          "higher_is_better": true,
+          "coefficient": 0.5,
+          "description": "Improvement in human-correlation score over the stronger of the audio-only and vision-only artifacts."
+        },
+        "joint_gain_over_late_fusion": {
+          "higher_is_better": true,
+          "coefficient": 0.3,
+          "description": "Improvement in human-correlation score over a simple average of audio-only and vision-only probabilities."
+        }
       },
       "results": {
         "full_neurosymbolic": {"type": "proposed", "human_correlation": 0.78, "multimodal_gain_over_best_unimodal": 0.23},

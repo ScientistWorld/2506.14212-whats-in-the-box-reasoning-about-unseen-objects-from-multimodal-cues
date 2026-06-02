@@ -15,8 +15,8 @@ from pathlib import Path
 
 SLICE = "test"
 SCENARIO_IDS = {
-    "scenario_b_jug_bottle_coins",
     "scenario_d_plate_spoon_towel",
+    "scenario_e_flashlight_keys_sponge",
 }
 
 METHOD_MAP = {
@@ -41,6 +41,28 @@ def pearson(xs: list[float], ys: list[float]) -> float:
 
 def mean_absolute_error(xs: list[float], ys: list[float]) -> float:
     return sum(abs(x - y) for x, y in zip(xs, ys)) / max(1, len(xs))
+
+
+def brier_score(xs: list[float], ys: list[float]) -> float:
+    return sum((x - y) ** 2 for x, y in zip(xs, ys)) / max(1, len(xs))
+
+
+def within_scenario_rank_accuracy(
+    scenario_values: list[tuple[list[float], list[float]]],
+) -> float:
+    correct = 0
+    total = 0
+    for pred_values, target_values in scenario_values:
+        for left in range(len(pred_values)):
+            for right in range(left + 1, len(pred_values)):
+                target_delta = target_values[left] - target_values[right]
+                if target_delta == 0:
+                    continue
+                pred_delta = pred_values[left] - pred_values[right]
+                total += 1
+                if pred_delta * target_delta > 0:
+                    correct += 1
+    return correct / max(1, total)
 
 
 def load_targets(data_path: Path) -> dict[str, dict[str, float]]:
@@ -68,10 +90,16 @@ def load_train_methods(train_scores: Path) -> set[str] | None:
 
 def flatten_prediction(
     pred: dict, targets: dict[str, dict[str, float]]
-) -> tuple[list[float], list[float], list[float]]:
+) -> tuple[list[float], list[float], list[float], list[tuple[list[float], list[float]]]]:
     pred_values = []
     target_values = []
     hyp_counts = []
+    scenario_values = []
+    scenario_ids = [scenario["scenario_id"] for scenario in pred["scenarios"]]
+    duplicates = sorted({sid for sid in scenario_ids if scenario_ids.count(sid) > 1})
+    if duplicates:
+        method = pred.get("method", "<unknown>")
+        raise SystemExit(f"{method} predictions contain duplicate scenarios: {duplicates}")
     by_id = {scenario["scenario_id"]: scenario for scenario in pred["scenarios"]}
     missing = sorted(set(targets) - by_id.keys())
     if missing:
@@ -80,18 +108,34 @@ def flatten_prediction(
     for sid in sorted(targets):
         scenario = by_id[sid]
         hyp_counts.append(float(scenario.get("num_hypotheses", 0)))
+        scenario_pred_values = []
+        scenario_target_values = []
         for obj_name, target in targets[sid].items():
-            pred_values.append(float(scenario["pred_left_prob"][obj_name]))
+            if obj_name not in scenario.get("pred_left_prob", {}):
+                method = pred.get("method", "<unknown>")
+                raise SystemExit(f"{method} predictions for {sid} are missing object {obj_name!r}")
+            value = float(scenario["pred_left_prob"][obj_name])
+            if not math.isfinite(value) or value < 0.0 or value > 1.0:
+                method = pred.get("method", "<unknown>")
+                raise SystemExit(
+                    f"{method} prediction for {sid}/{obj_name} must be a finite probability in [0, 1]"
+                )
+            pred_values.append(value)
             target_values.append(float(target))
-    return pred_values, target_values, hyp_counts
+            scenario_pred_values.append(value)
+            scenario_target_values.append(float(target))
+        scenario_values.append((scenario_pred_values, scenario_target_values))
+    return pred_values, target_values, hyp_counts, scenario_values
 
 
 def evaluate_payload(pred: dict, targets: dict[str, dict[str, float]]) -> tuple[str, dict[str, float]]:
     method_name = METHOD_MAP.get(pred["method"], pred["method"])
-    pred_values, target_values, hyp_counts = flatten_prediction(pred, targets)
+    pred_values, target_values, hyp_counts, scenario_values = flatten_prediction(pred, targets)
     return method_name, {
         "human_correlation": pearson(pred_values, target_values),
         "mean_absolute_error": mean_absolute_error(pred_values, target_values),
+        "brier_score": brier_score(pred_values, target_values),
+        "within_scenario_rank_accuracy": within_scenario_rank_accuracy(scenario_values),
         "_mean_hypotheses": sum(hyp_counts) / max(1, len(hyp_counts)),
         "_num_scenarios": float(len(targets)),
     }
