@@ -11,7 +11,16 @@
 
 ## Results
 
-Reduced-sample smoke test (`SAMPLES=50`) on the scaled parsed benchmark:
+Configured job result (`SAMPLES=1000`, job `abff144f-319`, exit code 0):
+
+- Full neurosymbolic: `human_correlation = 0.983`
+- Audio-only ablation: `human_correlation = 0.804`
+- Vision-only ablation: `human_correlation = 0.678`
+
+The full method beats both unimodal ablations, supporting the paper's core
+claim on the scaled parsed benchmark.
+
+Earlier reduced-sample smoke test (`SAMPLES=50`) on the scaled parsed benchmark:
 
 - Full neurosymbolic: `human_correlation = 0.954`
 - Audio-only ablation: `human_correlation = 0.804`
@@ -24,19 +33,16 @@ Paper reported on its unreleased analysis set:
 - Vision-only ablation: `r = 0.52`
 - Gemini 2.0 Flash baseline: `r = 0.31`
 
-The smoke test supports the expected ordering on the scaled benchmark, but the
-configured 1000-sample job is being submitted before claiming `core_claim`.
-
 ## Remaining
 
-- Run the configured reproduction job with 1000 visual rejection samples.
-- Inspect job results and update `MILESTONES.md` to `core_claim` if the full method still beats both unimodal ablations.
-- If budget permits after `core_claim`, add another setting or a direct VLM-style baseline.
+- Higher milestones would require more of the original paper's evaluation surface: additional scenarios, a direct Gemini-style VLM baseline, or recovered original stimuli/human ratings.
+- The current environment is packaged and validated for the core claim.
 
 ## Issues
 
 - The original 25 WiTB stimuli, parsed neural outputs, and human participant ratings are not released in the paper. Exact numerical reproduction of Figure 3 is therefore not possible from the paper alone.
 - Gemini 2.0 Flash and Llama 3.1 70B are hosted or very large systems; this scaled reproduction uses tracked structured parser outputs instead of calling unavailable APIs on compute nodes.
+- The notification's absolute stdout/stderr paths were not mounted in this container, but the same logs were available under `jobs/abff144f-319/`.
 
 ## Deviations from Paper
 

@@ -27,8 +27,8 @@
 #   milestone: core_claim
 #   notes: "Reproduced the core claim. Environment packaged."
 
-action: submit
+action: done
 gpus: 0
-test: true
-milestone: method_runs
-notes: "Run the configured 1000-sample WiTB Bayesian reproduction and validate scores on a CPU test node."
+test: false
+milestone: core_claim
+notes: "CPU job abff144f-319 reproduced the core claim: full WiTB Bayesian model r=0.983 beats audio-only r=0.804 and vision-only r=0.678; validation passed."
