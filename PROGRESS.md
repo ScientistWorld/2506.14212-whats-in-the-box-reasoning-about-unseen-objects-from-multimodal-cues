@@ -7,7 +7,7 @@
 - `method/witb_bayes.py` implements the paper's symbolic inference algorithm: non-empty placement enumeration, visual fit rejection sampling, audio evidence scoring, posterior normalization, and marginalization.
 - `baseline/witb_baselines.py` runs the paper's audio-only Eq. 3 ablation and the vision-only geometric ablation.
 - `scripts/reproduce.sh` writes prediction artifacts and `scripts/evaluate.sh` scores them without importing from `method/`.
-- `python validate.py --compare` passes on reduced-sample smoke-test outputs.
+- `python validate.py --compare` passes on the current `outputs/` prediction artifacts.
 
 ## Results
 
@@ -20,6 +20,12 @@ Corrected compute validation (`SAMPLES=1000`, job `2029a1ef-afb`, exit code 0, `
 
 The full method beats both unimodal ablations, supporting the paper's core
 claim on the scaled parsed benchmark.
+
+Continuation audit on 2026-06-02 verified that `scripts/evaluate.sh` works
+standalone from `outputs/`, `scripts/download.sh` and `environment/setup.sh`
+complete successfully, and each three-object/two-box scenario enumerates the
+paper-expected 6 non-empty placement hypotheses. A fresh web search found paper
+pages but no public code or full dataset release.
 
 Previous compute job `abff144f-319` completed successfully before the audio-only
 baseline was corrected to the paper's Eq. 3 formula. Job `2029a1ef-afb`

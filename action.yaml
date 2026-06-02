@@ -5,4 +5,4 @@ action: done
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Core claim reproduced on the packaged scaled WiTB benchmark; prior compute job 2029a1ef-afb passed validate.py --compare."
+notes: "Continuation audit restored core_claim: faithful Bayesian WiTB method, standalone evaluation passes, prior compute job 2029a1ef-afb validated the 1000-sample run."
