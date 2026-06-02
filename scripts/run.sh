@@ -1,20 +1,9 @@
 #!/bin/bash
-# Example job script submitted via the end-of-turn YAML block.
-#
-# This runs inside the compute container with:
-#   - Your workspace mounted at /home/user
-#   - GPU(s) available
-#   - No internet access
-#
-# Make sure all data, code, and dependencies are already in the
-# workspace or baked into the container before submitting.
+# Run the visible train and held-out test evaluation slices.
 
-set -e
+set -euo pipefail
 
 cd /home/user
 
-export SAMPLES="${SAMPLES:-1000}"
-export SEED="${SEED:-17}"
-
-bash scripts/reproduce.sh
-python validate.py --compare
+bash scripts/evaluate_train.sh outputs
+bash scripts/evaluate_test.sh outputs

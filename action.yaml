@@ -1,9 +1,6 @@
-# This iteration writes files only — do NOT submit compute jobs.
-# Once you set action to 'done', STOP immediately.
-# Do NOT sleep, poll, or wait. The system reads this file
-# only after your turn ends.
-action: done
+# The system reads this file after the turn ends.
+action: submit
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: "Improvements: added Brier score, within-scenario rank accuracy, artifact probability validation, less paper-exposed held-out scenarios, and complete metric metadata. Notes: tiny split and visible human targets remain runtime/design risks documented in DESIGN_NOTES.md."
+notes: "Run evaluate_train.sh and evaluate_test.sh over outputs/ to populate split scores and inspect train/test behavior."
