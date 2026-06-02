@@ -2,8 +2,8 @@
 # Once you set action to 'done', STOP immediately.
 # Do NOT sleep, poll, or wait. The system reads this file
 # only after your turn ends.
-action: pending
+action: done
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: ""
+notes: "Improvements: added Brier score, within-scenario rank accuracy, artifact probability validation, less paper-exposed held-out scenarios, and complete metric metadata. Notes: tiny split and visible human targets remain runtime/design risks documented in DESIGN_NOTES.md."
