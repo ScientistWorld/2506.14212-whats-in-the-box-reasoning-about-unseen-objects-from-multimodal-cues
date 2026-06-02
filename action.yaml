@@ -1,6 +1,6 @@
 # The system reads this file after the turn ends.
-action: submit
+action: done
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: "Run evaluate_train.sh and evaluate_test.sh over outputs/ to populate split scores and inspect train/test behavior."
+notes: "3/2 scenario train/test split; 18 train metric values and 18 test metric values populated from job b2e5e153-324. Full method train/test correlation 0.987/0.980, MAE 0.106/0.132, Brier 0.013/0.019; multimodal gain narrows on test 0.253->0.047. Caveats: tiny split, within-scenario rank partly saturated, and data file still exposes held-out human targets."
