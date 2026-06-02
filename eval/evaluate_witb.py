@@ -33,6 +33,32 @@ def mean_absolute_error(xs: list[float], ys: list[float]) -> float:
     return sum(abs(x - y) for x, y in zip(xs, ys)) / max(1, len(xs))
 
 
+def brier_score(xs: list[float], ys: list[float]) -> float:
+    return sum((x - y) ** 2 for x, y in zip(xs, ys)) / max(1, len(xs))
+
+
+def pairwise_rank_accuracy(pred_items: list[tuple[str, float]], target_items: list[tuple[str, float]]) -> float | None:
+    target_by_name = dict(target_items)
+    correct = 0.0
+    total = 0
+    for idx, (left_name, left_pred) in enumerate(pred_items):
+        for right_name, right_pred in pred_items[idx + 1 :]:
+            left_target = target_by_name[left_name]
+            right_target = target_by_name[right_name]
+            if left_target == right_target:
+                continue
+            total += 1
+            pred_diff = left_pred - right_pred
+            target_diff = left_target - right_target
+            if pred_diff == 0:
+                correct += 0.5
+            elif (pred_diff > 0) == (target_diff > 0):
+                correct += 1.0
+    if total == 0:
+        return None
+    return correct / total
+
+
 def load_targets(data_path: Path) -> dict[str, dict[str, float]]:
     data = json.loads(data_path.read_text())
     return {scenario["id"]: scenario["human_left_prob"] for scenario in data["scenarios"]}
@@ -51,12 +77,26 @@ def flatten_prediction(pred: dict, targets: dict[str, dict[str, float]]) -> tupl
     return pred_values, target_values, hyp_counts
 
 
+def within_scenario_rank_accuracy(pred: dict, targets: dict[str, dict[str, float]]) -> float:
+    scores = []
+    for scenario in pred["scenarios"]:
+        sid = scenario["scenario_id"]
+        pred_items = sorted((name, float(value)) for name, value in scenario["pred_left_prob"].items())
+        target_items = sorted((name, float(value)) for name, value in targets[sid].items())
+        score = pairwise_rank_accuracy(pred_items, target_items)
+        if score is not None:
+            scores.append(score)
+    return sum(scores) / max(1, len(scores))
+
+
 def evaluate_payload(pred: dict, targets: dict[str, dict[str, float]]) -> tuple[str, dict[str, float]]:
     method_name = METHOD_MAP.get(pred["method"], pred["method"])
     pred_values, target_values, hyp_counts = flatten_prediction(pred, targets)
     return method_name, {
         "human_correlation": pearson(pred_values, target_values),
-        "_mean_abs_error": mean_absolute_error(pred_values, target_values),
+        "mean_absolute_error": mean_absolute_error(pred_values, target_values),
+        "brier_score": brier_score(pred_values, target_values),
+        "within_scenario_rank_accuracy": within_scenario_rank_accuracy(pred, targets),
         "_mean_hypotheses": sum(hyp_counts) / max(1, len(hyp_counts)),
     }
 
@@ -121,7 +161,9 @@ def main() -> None:
         late_corr = late_metrics["human_correlation"]
         diagnostics["late_fusion_average"] = {
             "_human_correlation": late_corr,
-            "_mean_abs_error": late_metrics["_mean_abs_error"],
+            "_mean_abs_error": late_metrics["mean_absolute_error"],
+            "_brier_score": late_metrics["brier_score"],
+            "_within_scenario_rank_accuracy": late_metrics["within_scenario_rank_accuracy"],
         }
         results["full_neurosymbolic"]["joint_gain_over_late_fusion"] = full - late_corr
     payload = {

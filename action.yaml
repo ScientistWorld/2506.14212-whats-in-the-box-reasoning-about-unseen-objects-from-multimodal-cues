@@ -1,6 +1,6 @@
 # The system reads this file after the turn ends.
-action: done
+action: submit
 gpus: 0
-test: false
+test: true
 milestone: secondary_claims
-notes: "Verified no external artifacts are required; made reproduction scripts repo-relative and kept download.sh checking the tracked benchmark file."
+notes: "CPU container test: regenerate WiTB predictions, evaluate full/train/test slices, and run validate.py --compare after scoring-contract and method-likelihood fixes."

@@ -19,5 +19,10 @@
 - Added and verified a late-fusion diagnostic for the paper's secondary claim that joint hypothesis inference is not simply averaging unimodal outputs.
 - Full joint inference reached `human_correlation = 0.983`; late fusion reached `0.940`, giving `joint_gain_over_late_fusion = 0.044`.
 
+### [2026-06-02 13:28] - secondary_claims
+- Tightened the visual likelihood to match the paper's described rejection-sampling hit rate without extra smoothing or undocumented dimension shrinkage.
+- Expanded `scores.json` to include all declared calibration and within-scenario ranking metrics.
+- Local validation passed with full joint inference at `human_correlation = 0.980`, `multimodal_gain_over_best_unimodal = 0.184`, and `joint_gain_over_late_fusion = 0.055`.
+
 ## Stop Justification
 - Completed at milestone `secondary_claims`.

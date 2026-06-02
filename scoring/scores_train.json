@@ -9,24 +9,24 @@
       ],
       "results": {
         "audio_only_ablation": {
-          "human_correlation": 0.734127248531911,
+          "human_correlation": 0.7341272485319111,
           "mean_absolute_error": 0.1320468416143966,
           "brier_score": 0.04054624738713101,
           "within_scenario_rank_accuracy": 0.8888888888888888
         },
         "full_neurosymbolic": {
-          "human_correlation": 0.9874700796633493,
-          "mean_absolute_error": 0.10598288578377457,
-          "brier_score": 0.013447731778545568,
+          "human_correlation": 0.9852104453220909,
+          "mean_absolute_error": 0.11071883161662399,
+          "brier_score": 0.014221948999468622,
           "within_scenario_rank_accuracy": 1.0,
-          "multimodal_gain_over_best_unimodal": 0.2533428311314383,
-          "joint_gain_over_late_fusion": 0.05663751876337586
+          "multimodal_gain_over_best_unimodal": 0.25108319679017976,
+          "joint_gain_over_late_fusion": 0.06939027917085572
         },
         "vision_only_ablation": {
-          "human_correlation": 0.6400440628353664,
-          "mean_absolute_error": 0.19087414594887728,
-          "brier_score": 0.047123357059116626,
-          "within_scenario_rank_accuracy": 0.6666666666666666
+          "human_correlation": 0.5911312176019496,
+          "mean_absolute_error": 0.20070209111037618,
+          "brier_score": 0.05458379836118282,
+          "within_scenario_rank_accuracy": 0.7777777777777778
         }
       },
       "_diagnostics": {
@@ -43,8 +43,8 @@
           "_num_scenarios": 3.0
         },
         "late_fusion_average": {
-          "_human_correlation": 0.9308325608999735,
-          "_mean_absolute_error": 0.0855796712528397
+          "_human_correlation": 0.9158201661512352,
+          "_mean_absolute_error": 0.09277607560114291
         }
       }
     }

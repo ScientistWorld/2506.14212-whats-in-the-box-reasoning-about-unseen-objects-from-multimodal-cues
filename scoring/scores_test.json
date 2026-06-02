@@ -10,21 +10,21 @@
         "audio_only_ablation": {
           "human_correlation": 0.933180414917204,
           "mean_absolute_error": 0.07277815579673164,
-          "brier_score": 0.007392672494610068,
+          "brier_score": 0.0073926724946100685,
           "within_scenario_rank_accuracy": 1.0
         },
         "full_neurosymbolic": {
-          "human_correlation": 0.9800647916810795,
-          "mean_absolute_error": 0.1322451395748422,
-          "brier_score": 0.018959048304573414,
+          "human_correlation": 0.974077315181132,
+          "mean_absolute_error": 0.13241026899147465,
+          "brier_score": 0.019329119150784477,
           "within_scenario_rank_accuracy": 1.0,
-          "multimodal_gain_over_best_unimodal": 0.04688437676387547,
-          "joint_gain_over_late_fusion": 0.011956926311864069
+          "multimodal_gain_over_best_unimodal": 0.040896900263928004,
+          "joint_gain_over_late_fusion": 0.019809336471118377
         },
         "vision_only_ablation": {
-          "human_correlation": 0.7562734790058144,
-          "mean_absolute_error": 0.12469237136662574,
-          "brier_score": 0.02279900827657388,
+          "human_correlation": 0.7095135263764939,
+          "mean_absolute_error": 0.13238345962969786,
+          "brier_score": 0.02785943597086782,
           "within_scenario_rank_accuracy": 0.8333333333333334
         }
       },
@@ -42,8 +42,8 @@
           "_num_scenarios": 2.0
         },
         "late_fusion_average": {
-          "_human_correlation": 0.9681078653692154,
-          "_mean_absolute_error": 0.04845218039067314
+          "_human_correlation": 0.9542679787100137,
+          "_mean_absolute_error": 0.055626704002086226
         }
       }
     }

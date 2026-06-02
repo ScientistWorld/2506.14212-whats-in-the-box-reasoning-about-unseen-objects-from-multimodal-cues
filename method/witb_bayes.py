@@ -99,15 +99,13 @@ def visual_fit_probability(scenario: dict, box_idx: int, object_names: list[str]
         item_dims = []
         for name in object_names:
             obj = obj_by_name[name]
-            rigidity = float(obj.get("rigidity", 1.0))
-            compress = 0.75 + 0.25 * rigidity
             sampled = [
-                positive_normal(rng, m, s) * compress
+                positive_normal(rng, m, s)
                 for m, s in zip(obj["dims_cm"], obj["dims_std_cm"])
             ]
             item_dims.append(tuple(sampled))
         hits += int(can_pack_axis_aligned(item_dims, box_dims))
-    return (hits + 1.0) / (samples + 2.0)
+    return hits / max(1, samples)
 
 
 def score_scenario(scenario: dict, samples: int, seed: int, mode: str) -> dict:
@@ -148,6 +146,7 @@ def score_scenario(scenario: dict, samples: int, seed: int, mode: str) -> dict:
     return {
         "scenario_id": scenario["id"],
         "mode": mode,
+        "pred_box_probs": marginals,
         "pred_left_prob": {name: probs[0] for name, probs in marginals.items()},
         "num_hypotheses": len(hypotheses),
     }

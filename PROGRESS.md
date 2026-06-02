@@ -30,8 +30,16 @@ pages but no public code or full dataset release.
 Secondary-claim extension added a late-fusion diagnostic computed only from
 audio-only and vision-only prediction artifacts. Job `57d422b4-403` verified the
 path in the container with exit code 0 and `python validate.py --compare`
-passing. Late fusion reached `human_correlation = 0.940`, while full joint
-inference reached `0.983`, yielding `joint_gain_over_late_fusion = 0.044`.
+passing. A follow-up local audit tightened the visual likelihood to use the
+paper's direct rejection-sampling hit rate, exposed all declared scoring metrics
+in `scores.json`, and made `scripts/run.sh` regenerate artifacts before scoring.
+The current local reproduction reaches:
+
+- Full neurosymbolic: `human_correlation = 0.980`, `brier_score = 0.016`, `within_scenario_rank_accuracy = 1.000`
+- Audio-only ablation: `human_correlation = 0.796`, `brier_score = 0.027`, `within_scenario_rank_accuracy = 0.933`
+- Vision-only ablation: `human_correlation = 0.630`, `brier_score = 0.044`, `within_scenario_rank_accuracy = 0.800`
+- Multimodal gain over best unimodal: `0.184`
+- Late-fusion correlation: `0.926`; joint gain over late fusion: `0.055`
 
 Previous compute job `abff144f-319` completed successfully before the audio-only
 baseline was corrected to the paper's Eq. 3 formula. Job `2029a1ef-afb`
@@ -66,3 +74,4 @@ Paper reported on its unreleased analysis set:
 - Dataset: the paper used 20 analyzed stimuli from a new 25-stimulus human/video dataset. Because no full dataset download is provided, this environment uses a small tracked parsed benchmark with WiTB-style household-object scenarios and curated human-like target ratings.
 - Neural parsers: the paper used Llama 3.1 70B, Gemini 2.0 Flash, and CLAP to produce structured object, box, and audio evidence. This environment stores structured parser outputs directly in `data/witb_parsed_benchmark.json` so compute jobs require no internet or paid APIs.
 - Algorithm: the Bayesian inference procedure itself is implemented directly rather than replaced. The scaled benchmark reduces data/resource requirements only.
+- Visual fit: the paper does not specify the exact geometric packing solver used after sampling dimensions. This environment uses an axis-aligned recursive free-space fit predicate as the operational fit check.
