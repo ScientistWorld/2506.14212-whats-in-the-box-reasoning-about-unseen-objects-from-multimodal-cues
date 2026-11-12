@@ -1,0 +1,10 @@
+{
+  "scripts/evaluate_test.sh": "4c091bfa5def7cd9e7d7df0994c273a195ea42ae090db36771d3e8bd0d23fe31",
+  "eval/test/evaluate_witb_test.py": "604b9a2da1386c68e216d7e15ca20195cf80ee8b004bd2098d8a27e81f40ba95",
+  "eval/train/evaluate_witb_train.py": "698170366eed7bcd6dee0837caa9743ec137a6e7957597a070dd75791c6315f6",
+  "data/witb_parsed_benchmark.json": "6e241400c73632ef8fab12d79cf53cf0d3d903600f3a69caf62728c62c22e30d",
+  "method/witb_bayes.py": "cb99bb0211661fde987576f83cf48a779231518552ab884c0846f94a5cfe16ce",
+  "scoring/scores.json": "acdf4062f87f34f05288bc932beee88d92cb719ecdf98a4196b6779e4be53cd2",
+  "scoring/scores_train.json": "a16a9cdb4a4c9264636d3afc519d2caf8c63945a0d47adb8ae24c87c07b1e8d2",
+  "scoring/scores_test.json": "86f171a2657929223ded3234cabd75d36778281ec1e62a218b8b14823c351c10"
+}

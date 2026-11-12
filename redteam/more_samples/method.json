@@ -1,0 +1,6 @@
+{
+  "kind": "reference",
+  "samples": 10000,
+  "seed": 17,
+  "fixed_baselines": true
+}
