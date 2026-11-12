@@ -101,9 +101,9 @@
           "log_loss": 9.210340371976182
         },
         "simple_trained_late_fusion": {
-          "truth_correlation": 0.7525539160045402,
-          "brier_score": 0.12372304199772985,
-          "log_loss": 1.139531328655394
+          "truth_correlation": 0.8173951765706655,
+          "brier_score": 0.0829667439627942,
+          "log_loss": 0.2697754124355935
         },
         "weaker_audio_only": {
           "truth_correlation": 0.7533543447489551,
@@ -133,7 +133,7 @@
       },
       "_diagnostics": {
         "better_cue_weights": {
-          "runtime_s": 0.32,
+          "runtime_s": 0.27,
           "status": "ok"
         },
         "better_visual_floor": {
@@ -145,19 +145,19 @@
           "status": "ok"
         },
         "full_neurosymbolic": {
-          "runtime_s": 0.27,
+          "runtime_s": 0.26,
           "status": "ok"
         },
         "ref_samples5000": {
-          "runtime_s": 42.52,
+          "runtime_s": 0.22,
           "status": "ok"
         },
         "ref_seed29": {
-          "runtime_s": 8.65,
+          "runtime_s": 0.27,
           "status": "ok"
         },
         "ref_seed43": {
-          "runtime_s": 8.23,
+          "runtime_s": 0.22,
           "status": "ok"
         },
         "sc_constant": {
@@ -165,20 +165,20 @@
           "status": "ok"
         },
         "sc_copy_train_labels": {
-          "runtime_s": 0.27,
+          "runtime_s": 0.22,
           "status": "ok"
         },
         "sc_crash": {
-          "runtime_s": 0.27,
+          "runtime_s": 0.22,
           "status": "failed",
           "reason": "exit code 3"
         },
         "sc_extreme": {
-          "runtime_s": 0.21,
+          "runtime_s": 0.27,
           "status": "ok"
         },
         "sc_missing_half": {
-          "runtime_s": 0.21,
+          "runtime_s": 0.22,
           "status": "failed",
           "reason": "invalid output: missing scenario 'witb_7522f9fdb1'"
         },
@@ -188,7 +188,7 @@
           "reason": "invalid output: scenario 'witb_ab402d40e4' object 'headphone case': probability outside [0, 1]"
         },
         "sc_near_constant": {
-          "runtime_s": 0.21,
+          "runtime_s": 0.27,
           "status": "ok"
         },
         "sc_out_of_range": {
@@ -197,7 +197,7 @@
           "reason": "invalid output: scenario 'witb_ab402d40e4' object 'headphone case': probability outside [0, 1]"
         },
         "sc_read_hidden": {
-          "runtime_s": 0.32,
+          "runtime_s": 0.37,
           "status": "ok"
         },
         "sc_self_report": {
@@ -214,7 +214,7 @@
           "reason": "invalid output: scenario 'witb_ab402d40e4' object 'headphone case': probabilities sum to 2.000000, not 1"
         },
         "simple_trained_late_fusion": {
-          "runtime_s": 0.27,
+          "runtime_s": 0.22,
           "status": "ok"
         },
         "weaker_audio_only": {
@@ -222,19 +222,19 @@
           "status": "ok"
         },
         "weaker_late_fusion": {
-          "runtime_s": 0.32,
+          "runtime_s": 0.22,
           "status": "ok"
         },
         "weaker_one_sample": {
-          "runtime_s": 0.32,
+          "runtime_s": 0.27,
           "status": "ok"
         },
         "weaker_vision_only": {
-          "runtime_s": 0.27,
+          "runtime_s": 0.22,
           "status": "ok"
         },
         "weaker_weight_only": {
-          "runtime_s": 0.27,
+          "runtime_s": 0.22,
           "status": "ok"
         }
       },
