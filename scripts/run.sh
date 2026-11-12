@@ -5,4 +5,4 @@ set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-python3 redteam/audit.py all
+bash redteam/run_final_checks.sh

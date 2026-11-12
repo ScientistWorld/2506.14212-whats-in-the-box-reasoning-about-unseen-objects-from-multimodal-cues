@@ -186,6 +186,10 @@ def run_case(name):
         elif kind == "shortcut_visible_answers":
             targets = {sc["id"]: sc["human_left_prob"] for sc in read(DATA)["scenarios"]}
             set_probabilities(full, lambda p, sid, obj: targets[sid][obj])
+        elif kind in {"shortcut_near_constant", "shortcut_near_constant_bad_baselines"}:
+            # Destroy useful probability magnitudes. Pearson/rank still retain
+            # the reference's ordering in the tiny residual variation.
+            set_probabilities(full, lambda p, sid, obj: .5 + 1e-6 * (p - .5))
         elif kind in {"shortcut_constant", "shortcut_direct_scores", "shortcut_self_report"}:
             set_probabilities(full, lambda *args: .5)
             if kind == "shortcut_self_report":
@@ -207,7 +211,7 @@ def run_case(name):
             for sc in data["scenarios"]:
                 sc["human_left_prob"] = predictions[sc["id"]]
             write(DATA, data)
-        if kind == "shortcut_baseline_replacement":
+        if kind in {"shortcut_baseline_replacement", "shortcut_near_constant_bad_baselines"}:
             # Replace only supposedly fixed comparison artifacts. No new candidate method.
             for mode in ["audio", "vision"]:
                 path = outputs / f"witb_{mode}_predictions.json"

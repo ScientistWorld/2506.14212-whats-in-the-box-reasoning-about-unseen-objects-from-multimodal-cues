@@ -22,5 +22,7 @@
   "shortcut_empty",
   "shortcut_null",
   "shortcut_out_of_range",
-  "shortcut_missing_artifact"
+  "shortcut_missing_artifact",
+  "shortcut_near_constant",
+  "shortcut_near_constant_bad_baselines"
 ]
