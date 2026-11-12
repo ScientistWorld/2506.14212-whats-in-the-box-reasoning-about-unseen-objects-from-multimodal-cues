@@ -1,8 +1,6 @@
 # Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends.
-action: submit
-gpus: 0
-test: false
+action: done
 milestone: secondary_claims
-notes: "Final hardening job: 2000-scenario hidden test, float-tolerant validation, regularised stacker; fixed baselines, audit through evaluate_test.sh, reference-only scores from scratch."
+notes: "Hardened WiTB gym: hidden 2000-scenario test with true placements, predictors run on hidden inputs, worst-value failures, fixed baselines; reference r=0.802/Brier=0.089/logloss=0.346; better variants +0.64..+2.18 beyond seed noise; all shortcuts fail or tie (HARDENING.md)."

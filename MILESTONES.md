@@ -46,3 +46,8 @@
 
 ## Stop Justification
 - Completed at milestone `secondary_claims`.
+
+### [2026-11-12 18:10] - secondary_claims (iteration 11, hardening)
+- Rebuilt the gym around a hidden simulated WiTB world with true placements. There are 240 visible train scenarios and 2000 hidden test scenarios. Predictors run on the hidden inputs.
+- Paper's full model on the hidden test: r=0.802, Brier=0.0893, log loss=0.346. It beats audio-only (0.770), vision-only (0.454) and late-fusion averaging (0.764) in correlation and Brier score: the paper's claim, in its direction, on the substitute target.
+- The variant and shortcut audit is in HARDENING.md.

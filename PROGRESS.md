@@ -1,83 +1,42 @@
 # Progress
 
-## What Works
+## Current state (iteration 11, hardening)
 
-- Paper analysis is complete in `notes/paper_analysis.md` and `briefing/`.
-- A scaled parsed WiTB benchmark is tracked in `data/witb_parsed_benchmark.json`.
-- `method/witb_bayes.py` implements the paper's symbolic inference algorithm: non-empty placement enumeration, visual fit rejection sampling, audio evidence scoring, posterior normalization, and marginalization.
-- `baseline/witb_baselines.py` runs the paper's audio-only Eq. 3 ablation and the vision-only geometric ablation.
-- `scripts/reproduce.sh` writes prediction artifacts and `scripts/evaluate.sh` scores them without importing from `method/`.
-- `python validate.py --compare` passes on the current `outputs/` prediction artifacts.
+- Benchmark: a simulated What's-in-the-Box world (`eval/test/witb_world.py`,
+  hidden). 240 labelled train scenarios are visible in `data/witb_train.json`;
+  2000 hidden test scenarios (7075 objects) are in `eval/test/`. Targets are
+  true object placements. See `data/README.md`.
+- Method: `method/witb_bayes.py` implements the paper's Bayesian engine. It
+  enumerates the K!·S(N,K) placements, uses a uniform prior, estimates visual
+  fit by 1000-sample rejection sampling, uses Eq. 2 audio evidence, and
+  normalises and marginalises. It runs as the predictor
+  `method/predictors/full_neurosymbolic.sh`.
+- Baselines: `baseline/witb_baselines.py` has audio-only (Eq. 3), vision-only,
+  the late-fusion average and chance. Fixed copies are in
+  `eval/{train,test}/fixed_baselines_*.json`.
+- Evaluation: `scripts/evaluate_train.sh` and `scripts/evaluate_test.sh` take
+  no arguments and run every `method/predictors/*.sh`. Metrics are
+  truth_correlation, brier_score and log_loss; a failure scores worst on all
+  three.
 
-## Results
+## Results (hidden test, 2000 scenarios)
 
-Corrected compute validation (`SAMPLES=1000`, job `2029a1ef-afb`, exit code 0, `python validate.py --compare` passed):
+| system | r | Brier | log loss |
+|---|---:|---:|---:|
+| full model (paper) | 0.802 | 0.0893 | 0.346 |
+| audio-only (Eq. 3) | 0.770 | 0.1038 | 0.340 |
+| late-fusion average | 0.764 | 0.1191 | 0.394 |
+| vision-only | 0.454 | 0.2029 | 0.655 |
+| chance | 0 | 0.25 | 0.693 |
 
-- Full neurosymbolic: `human_correlation = 0.983`
-- Audio-only ablation: `human_correlation = 0.796`
-- Vision-only ablation: `human_correlation = 0.678`
-- Multimodal gain over best unimodal: `0.187`
+The paper reports r = 0.78 / 0.55 / 0.52 against human ratings (not
+comparable). `HARDENING.md` has the variant and shortcut audit.
 
-The full method beats both unimodal ablations, supporting the paper's core
-claim on the scaled parsed benchmark.
+## Deviations from the paper
 
-Continuation audit on 2026-06-02 verified that `scripts/evaluate.sh` works
-standalone from `outputs/`, `scripts/download.sh` and `environment/setup.sh`
-complete successfully, and each three-object/two-box scenario enumerates the
-paper-expected 6 non-empty placement hypotheses. A fresh web search found paper
-pages but no public code or full dataset release.
-
-Secondary-claim extension added a late-fusion diagnostic computed only from
-audio-only and vision-only prediction artifacts. Job `57d422b4-403` verified the
-path in the container with exit code 0 and `python validate.py --compare`
-passing. A follow-up local audit tightened the visual likelihood to use the
-paper's direct rejection-sampling hit rate, exposed all declared scoring metrics
-in `scores.json`, and made `scripts/run.sh` regenerate artifacts before scoring.
-The current local reproduction reaches:
-
-- Full neurosymbolic: `human_correlation = 0.980`, `brier_score = 0.016`, `within_scenario_rank_accuracy = 1.000`
-- Audio-only ablation: `human_correlation = 0.796`, `brier_score = 0.027`, `within_scenario_rank_accuracy = 0.933`
-- Vision-only ablation: `human_correlation = 0.630`, `brier_score = 0.044`, `within_scenario_rank_accuracy = 0.800`
-- Uniform chance diagnostic: `human_correlation = 0.000`, `brier_score = 0.061`, `within_scenario_rank_accuracy = 0.500`
-- Multimodal gain over best unimodal: `0.184`
-- Late-fusion correlation: `0.926`; joint gain over late fusion: `0.055`
-
-On 2026-06-02, an additional web search found the arXiv page and paper index
-pages, but no public code repository or full WiTB dataset release. The
-benchmark therefore remains a scaled parsed reproduction rather than an exact
-rerun of the unreleased 20-stimulus human evaluation.
-
-Previous compute job `abff144f-319` completed successfully before the audio-only
-baseline was corrected to the paper's Eq. 3 formula. Job `2029a1ef-afb`
-verified the corrected code path in the container.
-
-Earlier reduced-sample smoke test (`SAMPLES=50`) on the scaled parsed benchmark:
-
-- Full neurosymbolic: `human_correlation = 0.954`
-- Audio-only ablation: `human_correlation = 0.804`
-- Vision-only ablation: `human_correlation = 0.696`
-
-Paper reported on its unreleased analysis set:
-
-- Full neurosymbolic: `r = 0.78`
-- Audio-only ablation: `r = 0.55`
-- Vision-only ablation: `r = 0.52`
-- Gemini 2.0 Flash baseline: `r = 0.31`
-
-## Remaining
-
-- Higher milestones would require more of the original paper's evaluation surface: additional scenarios, a direct Gemini-style VLM baseline, or recovered original stimuli/human ratings.
-- The current environment is packaged and validated through the secondary late-fusion claim.
-
-## Issues
-
-- The original 25 WiTB stimuli, parsed neural outputs, and human participant ratings are not released in the paper. Exact numerical reproduction of Figure 3 is therefore not possible from the paper alone.
-- Gemini 2.0 Flash and Llama 3.1 70B are hosted or very large systems; this scaled reproduction uses tracked structured parser outputs instead of calling unavailable APIs on compute nodes.
-- Compute logs for the corrected run are available under `jobs/2029a1ef-afb/`.
-
-## Deviations from Paper
-
-- Dataset: the paper used 20 analyzed stimuli from a new 25-stimulus human/video dataset. Because no full dataset download is provided, this environment uses a small tracked parsed benchmark with WiTB-style household-object scenarios and curated human-like target ratings.
-- Neural parsers: the paper used Llama 3.1 70B, Gemini 2.0 Flash, and CLAP to produce structured object, box, and audio evidence. This environment stores structured parser outputs directly in `data/witb_parsed_benchmark.json` so compute jobs require no internet or paid APIs.
-- Algorithm: the Bayesian inference procedure itself is implemented directly rather than replaced. The scaled benchmark reduces data/resource requirements only.
-- Visual fit: the paper does not specify the exact geometric packing solver used after sampling dimensions. This environment uses an axis-aligned recursive free-space fit predicate as the operational fit check.
+- Data and target: a simulated world with true placements, instead of 20
+  unreleased videos and the mean ratings of 54 participants.
+- Neural parsers: the LLM, Gemini and CLAP outputs are simulated, not run;
+  there is no Gemini baseline.
+- The fit predicate is an axis-aligned guillotine packer (the paper does not
+  specify one).

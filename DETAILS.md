@@ -7,19 +7,28 @@
 
 ## Short Summary
 
-The paper introduces the What-is-in-the-Box task, where people and models infer
-which listed objects are hidden in boxes after seeing and hearing the boxes
-handled. Its model uses neural parsers to convert object names, box images, and
-audio into structured evidence, then performs Bayesian inference over all
-object-placement hypotheses. The reported full model correlates much more
-strongly with human judgments than audio-only, vision-only, or Gemini 2.0 Flash
+The paper introduces the What's-in-the-Box task, where people and models infer
+which listed objects are hidden in which of two boxes after seeing and hearing
+the boxes handled. Its model uses neural parsers to turn object names, box
+images and audio into structured evidence, then performs Bayesian inference
+over all object-placement hypotheses. The full model correlates much more
+strongly with human judgments than audio-only, vision-only or Gemini 2.0 Flash
 baselines.
 
-## Key Results
+## Key Results (paper, correlation with mean human ratings, 20 stimuli)
 
-- Full model human-correlation: `r = 0.78`.
-- Unimodal ablations are lower: audio-only `r = 0.55`, vision-only `r = 0.52`.
-- Gemini 2.0 Flash baseline is much lower: `r = 0.31`.
+- Full model: `r = 0.78`.
+- Audio-only `r = 0.55`, vision-only `r = 0.52`.
+- Gemini 2.0 Flash `r = 0.31`.
+
+## This gym
+
+The original videos and ratings are not public. The gym scores methods on 2000
+hidden scenarios from a simulated What's-in-the-Box world against the objects'
+true placements: correlation (primary), Brier score and log loss. Each method
+is a predictor script that the evaluator runs on the hidden inputs. The
+paper's full model reaches correlation 0.802, Brier 0.089 and log loss 0.346;
+its audio-only, vision-only and averaged ablations score lower.
 
 ---
 
@@ -27,23 +36,54 @@ baselines.
 
 ## Research Question
 
-How can a system infer which unseen household objects are inside which boxes
-from incomplete multimodal evidence: a list of candidate objects, visible box
-sizes, and sounds produced when the boxes are handled?
+Several household objects are hidden in two closed boxes. An observer is told
+which objects there are, sees the boxes, and hears them being shaken. How can
+a system turn these indirect, noisy cues into a probability, for every object,
+of which box it is in?
 
 ## Why It Matters
 
-Everyday physical reasoning often requires judging hidden states from indirect
-cues. A good solution would support robots and AI systems that can reason about
-occluded objects under uncertainty instead of relying only on direct visual
-recognition.
+People routinely reason about things they cannot see by combining what they
+know about objects, what they see and what they hear. A system that does this
+well, with well-calibrated probabilities, is a model of that human ability and
+a building block for robots that must reason about occluded objects.
+
+## Inputs (per scenario)
+
+The cues have already been parsed into structured form, the way
+language, vision and audio models would parse them:
+
+- **Objects** (2-5 per scenario): name, and a language-model estimate of their
+  dimensions in cm (mean and standard deviation per dimension), weight in kg
+  (mean and standard deviation), material, and rigidity (0 = fully squashable,
+  1 = rigid). These estimates come from the object's name alone, so they are
+  generic for that kind of object and can be biased or over-confident.
+- **Boxes** (2 per scenario, `left` and `right`): a vision-model estimate of
+  the inner dimensions in cm (mean and standard deviation) and an estimate of
+  how heavy the box is when it is lifted and shaken (`lifted_weight_kg`, total
+  of box and contents, noisy).
+- **Sound**: for each box, a zero-shot sound classifier's posterior over the
+  scenario's object names, computed from the sound of that box being shaken.
+  Sounds of several objects mix, quiet objects can be masked by loud ones,
+  tightly packed boxes rattle less, and the classifier is imperfect.
+
+## Output
+
+For every object, a probability distribution over the two boxes.
 
 ## Success Criteria
 
-A successful system outputs calibrated object-by-box probability judgments that
-align with human judgments and improves over systems that rely on only one
-modality. The evaluation should preserve the same object lists, boxes, and cue
-inputs across methods.
+Probabilities that track where the objects really are and are calibrated, on
+scenarios the system has never seen. Every box holds at least one object, and
+every object is in exactly one box.
+
+## Data
+
+The original study's videos and participant ratings are not public. The gym
+uses a simulated What's-in-the-Box world with household objects, box sizes and
+cue noise modelled on the original study. 240 labelled scenarios are visible
+in `data/witb_train.json`; scoring uses 2000 hidden scenarios from the same
+world.
 
 ---
 
@@ -51,60 +91,139 @@ inputs across methods.
 
 ## Key Contribution
 
-The paper proposes a neurosymbolic model for hidden-object reasoning in the
-What-is-in-the-Box game. Neural perception modules parse language, vision, and
-audio into structured evidence, then a Bayesian symbolic engine integrates the
-evidence over explicit object-placement hypotheses.
+A neurosymbolic model of the What's-in-the-Box game. Neural models parse the
+object names (an LLM: dimensions with uncertainty, weight, material,
+rigidity), the first video frame (Gemini: box dimensions) and the sound of
+each box being shaken (CLAP: posterior over the scenario's object names). A
+Bayesian engine then integrates these cues over explicit object-placement
+hypotheses.
 
-## Approach
+## Algorithm (implemented in `method/witb_bayes.py`)
 
-The language parser estimates uncertain object physical attributes such as size
-and rigidity from object names. The vision parser estimates box dimensions from
-the first video frame. The audio parser uses CLAP with scenario object names as
-candidate labels to produce per-box object probabilities.
+1. Enumerate every assignment of the N objects to the K boxes that leaves no
+   box empty (|H| = K!·S(N, K)); uniform prior over them.
+2. Visual evidence P(O_i | H_i): draw object and box dimensions 1000 times
+   from the parsed normal distributions and count how often the hypothesised
+   objects physically fit in box i (rejection sampling).
+3. Audio evidence P(H_i | A_i) = Π_{o∈H_i} P(o | A_i) from the per-box
+   classifier posterior (paper Eq. 2).
+4. P(H | O, A) ∝ Π_i P(O_i | H_i) P(H_i | A_i) (paper Eq. 1, cues treated as
+   conditionally independent and equally weighted); normalise and
+   marginalise into per-object box probabilities.
 
-The reasoning engine enumerates all non-empty assignments of objects to boxes,
-uses a uniform prior, estimates visual likelihoods by rejection sampling whether
-sampled object dimensions fit sampled box dimensions, multiplies audio
-posteriors for objects assigned to each box, normalizes the posterior over
-hypotheses, and marginalizes to per-object box probabilities.
+Implementation choices the paper does not specify: the fit check is an
+axis-aligned guillotine packer that tries all six orientations of each object
+(at most eight free regions); sampled dimensions are clamped at 0.1 cm; one set
+of 1000 draws per scenario is shared by all hypotheses; the random stream is
+seeded by (seed 17, scenario id). The parsed weight, rigidity, material and
+lifted-weight fields are not used, as in the paper's equations.
+
+The predictor `method/predictors/full_neurosymbolic.sh` runs this model with
+1000 samples and seed 17.
+
+## Paper ablations (in `baseline/witb_baselines.py`)
+
+- Audio-only (paper Eq. 3): P(o in box i) = P(o|A_i) / Σ_j P(o|A_j).
+- Vision-only: the same hypothesis inference with visual evidence only.
+- Late-fusion average of the two (not a paper baseline; tests whether joint
+  inference adds more than averaging).
 
 ## Main Claims
 
-The primary claim is that multimodal Bayesian integration aligns strongly with
-human probability judgments and outperforms unimodal ablations. The paper
-reports `r = 0.78` for the full model, compared with `r = 0.55` for audio-only,
-`r = 0.52` for vision-only, and `r = 0.31` for Gemini 2.0 Flash.
+The full model correlates strongly with mean human ratings (r = 0.78), better
+than audio-only (0.55), vision-only (0.52) and Gemini 2.0 Flash (0.31).
+Joint inference over hypotheses is not a simple average of the unimodal
+outputs. Limitations the paper names: equal cue weights (it suggests learning
+cue reliabilities), no use of how heavy a box looks when handled, and an audio
+model that misses quiet sounds or sounds mixed with others.
 
-Secondary claims are that geometry helps for size-constrained objects, audio
-helps for distinctive sounds, and joint hypothesis-level inference is more
-informative than simply averaging unimodal outputs.
+## In this gym
+
+On the 2000 hidden simulated scenarios, the full model reaches correlation
+0.802 with the true placements. Audio-only reaches 0.770, vision-only 0.454
+and the late-fusion average 0.764. It is also better on Brier score than all
+three; on log loss audio-only is level with it (0.340 vs 0.346).
 
 ---
 
 # Evaluation
 
-## Metrics
+## How a method is run
 
-The primary metric is Pearson correlation between a system's object-in-left-box
-probabilities and average human object-in-left-box probability ratings across
-all scenario/object queries. Higher correlation is better.
+A method is an executable shell script `method/predictors/<name>.sh`. The
+evaluators call every such script, as
 
-## Baselines and Targets
+```
+bash method/predictors/<name>.sh INPUT_JSON OUTPUT_JSON
+```
 
-The paper reports these correlations on its unreleased 20-stimulus analysis set:
-full system `r = 0.78`, audio-only `r = 0.55`, vision-only `r = 0.52`, and
-Gemini 2.0 Flash `r = 0.31`. In this scaled environment, success is measured by
-running the same evaluation metric on the included parsed benchmark and checking
-that the multimodal system beats both unimodal reference methods.
+with the workspace root as working directory. Every script on disk is
+scored under its file name (`<name>`).
 
-## Evaluation Protocol
+- `INPUT_JSON` has `{"scenarios": [...]}` with the fields described in
+  `briefing/problem.md` and `data/README.md`, but **without** `true_box`.
+- `OUTPUT_JSON` must be
+  `{"scenarios": [{"id": "<scenario id>", "box_probs": {"<object name>": [p_left, p_right], ...}}, ...]}`.
+  Every scenario id and every object name must be present; each list has one
+  finite probability per box in [0, 1] (floating-point slack of 1e-6 is
+  clipped) and sums to 1 (tolerance 1e-3). Anything else in the file is
+  ignored.
+- The script runs offline on one CPU core and must finish within 2 hours.
+  It may use code and files in the workspace (for example parameters fitted
+  on the train split).
 
-Methods write prediction artifacts to `outputs/*_predictions.json`. Each
-artifact must contain per-scenario object-in-left-box probabilities. Run
-`bash scripts/evaluate.sh outputs data/witb_parsed_benchmark.json` to write
-`scoring/scores.json`. Evaluation code must not call into `method/`; it only
-reads predictions and the benchmark targets.
+A script that crashes, times out, or writes an incomplete or invalid output
+**fails**. A failed method receives the worst possible value of every scored
+metric (correlation −1, Brier 1, log loss −ln 1e-4 ≈ 9.21).
+
+## Splits
+
+- **Train (visible):** `data/witb_train.json`, 240 scenarios (881 objects)
+  with their true placements. `bash scripts/evaluate_train.sh` (no arguments)
+  runs every predictor on them and writes `scoring/scores_train.json`.
+  `bash scripts/evaluate.sh` does the same and writes `scoring/scores.json`.
+- **Test (hidden):** 2000 scenarios (7075 objects) from the same simulated
+  world, held only by the hidden evaluator. `bash scripts/evaluate_test.sh`
+  (no arguments) runs every predictor on them and writes
+  `scoring/scores_test.json`. Predictors get the unlabelled inputs in a
+  temporary directory; the evaluator's own directory is unreadable while they
+  run. Every method sees exactly the same test inputs.
+
+## Metrics (experiment `witb_placement_inference`)
+
+All metrics are recomputed by the evaluator from `box_probs` and the true
+placements.
+
+| metric | better | coefficient | meaning |
+|---|---|---:|---|
+| `truth_correlation` (primary) | higher | 1.0 | Pearson correlation over all (object, box) queries between the predicted probability and whether the object is in that box |
+| `brier_score` | lower | 1.0 | mean over objects of ½ Σ_box (p − 1[true box])² |
+| `log_loss` | lower | 0.5 | mean over objects of −ln max(p_true box, 1e-4) |
+
+Correlation measures how well a method ranks likely and unlikely placements
+(the statistic the original study reports). The two proper scoring rules also
+require the probabilities to be calibrated, so a method cannot gain by
+sharpening or flattening its outputs.
+
+## Reference and comparison numbers
+
+`scoring/scores_test.json` holds the reference method's hidden-test scores
+(correlation 0.802, Brier 0.0893, log loss 0.346). Each score file also lists,
+under `_baselines`, fixed comparison predictions stored with the evaluators
+(single-cue systems, an average of the two single-cue systems, and chance).
+They are not ranked.
+
+| comparison (hidden test) | correlation | Brier | log loss |
+|---|---:|---:|---:|
+| sound cue only | 0.770 | 0.104 | 0.340 |
+| size cue only | 0.454 | 0.203 | 0.655 |
+| average of the two single-cue outputs | 0.764 | 0.119 | 0.394 |
+| chance (0.5 / 0.5) | 0.000 | 0.250 | 0.693 |
+
+The original study reports correlations with human ratings (0.78 for its
+model, 0.55 sound only, 0.52 vision only, 0.31 for a large vision-language
+model). Those are on a different target and are kept in
+`scoring/reference.json` under `_paper_reported`, not as numbers to match.
 
 ---
 

@@ -24,9 +24,33 @@
       "results": {
         "full_neurosymbolic": {
           "type": "proposed",
+          "truth_correlation": 0.802166,
+          "brier_score": 0.08929,
+          "log_loss": 0.345952
+        },
+        "audio_only_ablation": {
+          "type": "baseline",
+          "truth_correlation": 0.769527,
+          "brier_score": 0.103808,
+          "log_loss": 0.340125
+        },
+        "vision_only_ablation": {
+          "type": "baseline",
+          "truth_correlation": 0.454465,
+          "brier_score": 0.202871,
+          "log_loss": 0.654607
+        },
+        "late_fusion_average": {
+          "type": "baseline",
+          "truth_correlation": 0.763669,
+          "brier_score": 0.119103,
+          "log_loss": 0.394009
+        },
+        "uniform_chance": {
+          "type": "baseline",
           "truth_correlation": 0.0,
-          "brier_score": 0.0,
-          "log_loss": 0.0
+          "brier_score": 0.25,
+          "log_loss": 0.693147
         }
       },
       "_paper_reported": {
@@ -36,7 +60,8 @@
         "audio_only_ablation": 0.55,
         "vision_only_ablation": 0.52,
         "gemini_2_flash": 0.31
-      }
+      },
+      "_results_note": "results are this gym's reference runs on the 2000 hidden test scenarios: the paper's full model (method/predictors/full_neurosymbolic.sh, 1000 samples, seed 17) and the paper's ablations / chance as fixed comparison predictions stored in eval/test/. The paper's own numbers are under _paper_reported."
     }
   }
 }

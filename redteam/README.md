@@ -1,3 +1,9 @@
+> **Superseded.** The cases in this folder audit the pre-hardening gym of
+> iteration 10 (five hand-authored scenarios, `outputs/*_predictions.json`
+> artifacts). That evaluator and dataset no longer exist, so these scripts no
+> longer run. They are kept as the "before" evidence for `HARDENING.md`. The
+> current audit is in `redteam/hardening/`.
+
 # Benchmark scoring audit
 
 Run `bash redteam/<case>/run.sh` from the gym container to install that case's

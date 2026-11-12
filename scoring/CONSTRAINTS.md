@@ -1,29 +1,30 @@
 # Scientist Constraints
 
-## Data
+## Interface
 
-Use `data/witb_parsed_benchmark.json` for scored evaluation. Do not add new
-evaluation scenarios, replace target ratings, or tune on hidden variants and
-then report them under `witb_human_alignment`.
+- A method is `method/predictors/<name>.sh`, called as
+  `bash method/predictors/<name>.sh INPUT_JSON OUTPUT_JSON` from the workspace
+  root. Output format and validity rules are in `briefing/evaluation.md`.
+- Every predictor on disk is scored, on the visible train split by
+  `scripts/evaluate_train.sh` and on the hidden test by
+  `scripts/evaluate_test.sh`.
+- Predictors run offline on one CPU core, with a 2-hour limit each, and must
+  be deterministic (fix any random seeds).
 
-## Outputs
+## Hold fixed
 
-Submissions must write object-in-left-box probabilities in the same JSON format
-used by the existing `outputs/*_predictions.json` artifacts. The evaluator must remain
-method-agnostic and must not import from `method/`.
+- Do not modify `eval/`, `scripts/evaluate*.sh`, `scoring/reference.json` or
+  the visible data `data/witb_train.json`. Scores are recomputed from your
+  predictor's `box_probs`; score files or extra fields you write are ignored.
+- Use only the cue fields in the input. Do not try to read the hidden
+  evaluator's files or otherwise obtain test labels.
+- You may fit parameters on `data/witb_train.json` (its true placements are
+  visible) and ship them with your predictor. The hidden test does not
+  retrain anything.
 
-## Resource Scaling
+## Compliance checklist
 
-Do not improve scores by changing the benchmark targets, adding external human
-ratings, or evaluating on a different scenario distribution under the same
-experiment name. Any larger models or external parsers used to improve the
-structured cue estimates must be run before compute submission and documented.
-
-## Compliance Checklist
-
-- [ ] Evaluation uses `data/witb_parsed_benchmark.json`.
-- [ ] `scoring/scores.json` is written by `scripts/evaluate.sh`.
-- [ ] Evaluation code does not import from `method/`.
-- [ ] Reported `witb_human_alignment` scores use the fixed benchmark targets.
-- [ ] The late-fusion diagnostic is computed from prediction artifacts, not by
-      rerunning or importing the paper method.
+- [ ] My method is a `method/predictors/<name>.sh` script that reads INPUT_JSON and writes OUTPUT_JSON.
+- [ ] It produces a valid distribution for every scenario and object.
+- [ ] It runs offline, deterministically, within 2 hours on one CPU.
+- [ ] I did not modify evaluation code, reference scores or the visible data.

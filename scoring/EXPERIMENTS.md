@@ -1,19 +1,23 @@
 # Experiment Overview
 
-## witb_human_alignment
+## witb_placement_inference
 
-Tests whether a system can produce hidden-object location probabilities that
-track human judgments across a set of two-box household-object scenarios. The
-experiment also includes single-cue reference outputs so the benchmark measures
-whether using multiple cue types improves alignment rather than simply solving a
-unimodal version of the task. The reported gain metric summarizes whether the
-main system exceeds the better of the two single-cue references.
+Establishes how well a system infers where unseen objects are, given parsed
+object descriptions, box measurements, how heavy each box looks when shaken,
+and per-box sound-classifier posteriors. Each system is run on 2000 hidden
+two-box scenarios (2-5 objects each, 7075 objects in all) that it has never
+seen. Its probabilities are compared with the objects' true placements.
 
-The same experiment also reports a secondary diagnostic comparing the main
-system against a simple average of the audio-only and vision-only predictions.
-This checks whether a multi-cue system adds value beyond post-hoc averaging of
-single-cue probability judgments.
+- `truth_correlation` (primary) asks whether the system's graded judgments
+  track where objects really are, the same correlation statistic the original
+  study uses against human ratings.
+- `brier_score` and `log_loss` ask whether those judgments are calibrated
+  probabilities. They guard against improving the ranking by distorting the
+  confidence of the outputs.
 
-A neutral constant-probability diagnostic is included to show that the scaled
-benchmark has room below the paper ablations. It is not compared to a paper
-number because the paper did not report this baseline.
+A system that fails to produce a valid, complete distribution for every
+hidden object is scored at the worst value on all three metrics.
+
+Fixed single-cue systems, their average and chance are reported for
+comparison (`_baselines`). They show how much of the task a single kind of
+cue solves and where integrating cues helps.

@@ -1,3 +1,5 @@
+> **Superseded (iteration 11).** This note describes the earlier five-scenario gym. See `HARDENING.md` for the current design.
+
 # Design Notes
 
 ## Checked

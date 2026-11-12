@@ -1,0 +1,92 @@
+{
+ "better_cue_weights - simple_trained_late_fusion": {
+  "truth_correlation": [
+   0.0012,
+   0.0085
+  ],
+  "brier_score": [
+   -0.0035,
+   -0.0005
+  ],
+  "log_loss": [
+   -0.0135,
+   -0.0043
+  ],
+  "aggregate": [
+   0.035,
+   0.194
+  ]
+ },
+ "better_visual_floor - simple_trained_late_fusion": {
+  "truth_correlation": [
+   -0.0004,
+   0.0074
+  ],
+  "brier_score": [
+   -0.0026,
+   0.0006
+  ],
+  "log_loss": [
+   -0.0089,
+   0.0014
+  ],
+  "aggregate": [
+   -0.018,
+   0.149
+  ]
+ },
+ "better_weight_cue - better_cue_weights": {
+  "truth_correlation": [
+   0.0573,
+   0.0717
+  ],
+  "brier_score": [
+   -0.0307,
+   -0.0248
+  ],
+  "log_loss": [
+   -0.0986,
+   -0.0812
+  ],
+  "aggregate": [
+   1.326,
+   1.643
+  ]
+ },
+ "full_neurosymbolic - weaker_late_fusion": {
+  "truth_correlation": [
+   0.0321,
+   0.0442
+  ],
+  "brier_score": [
+   -0.0329,
+   -0.0264
+  ],
+  "log_loss": [
+   -0.0704,
+   -0.0249
+  ],
+  "aggregate": [
+   1.004,
+   1.373
+  ]
+ },
+ "full_neurosymbolic - weaker_audio_only": {
+  "truth_correlation": [
+   0.02,
+   0.0435
+  ],
+  "brier_score": [
+   -0.0189,
+   -0.0096
+  ],
+  "log_loss": [
+   -0.0196,
+   0.0327
+  ],
+  "aggregate": [
+   0.318,
+   0.871
+  ]
+ }
+}

@@ -2,26 +2,29 @@
 
 ## Research Problem
 
-The research problem is probabilistic reasoning about unseen object placements
-from indirect multimodal cues. Improvements should address how a system turns
-ambiguous cue evidence into object-location probability judgments.
+Probabilistic reasoning about unseen object placements from indirect,
+imperfect cues: what each object is like (from its name), how big the boxes
+are, how heavy they look, and what they sound like. Improvements should make
+the object-in-box probabilities more accurate and better calibrated on unseen
+scenarios.
 
 ## Core Contribution
 
-The paper's contribution is structured multimodal cue integration for hidden
-object reasoning. Work should remain in this problem family: combining object
-identity priors, visible box constraints, and per-box auditory evidence to infer
-which objects are hidden where.
+Structured integration of several cue types into one coherent judgment about
+where everything is. A good method should respect that each object is in
+exactly one box, that boxes have limited room, and that cues differ in how
+reliable they are.
 
 ## Approach Scope
 
-Scientists may improve cue estimates, uncertainty calibration, physical
-compatibility judgments, or multi-cue probability estimation as long as the
-output is a distribution over object placements for the same WiTB-style inputs.
+In scope: better use of each cue (for example, how far to trust a size or
+sound estimate, how sounds of several objects mix, squashable objects, how
+heavy a box looks), better joint reasoning over placements, and calibration
+learned from the visible train split.
 
 ## Out of Bounds
 
-Directly fitting a generic predictor to the benchmark target ratings is out of
-scope because it bypasses the hidden-state reasoning problem. Changing the task
-to open-ended object recognition, using extra evaluation labels, or reporting a
-different benchmark under the same experiment name is also out of bounds.
+Obtaining hidden-test labels or inputs in any way, editing the evaluators or
+data, and hard-coding answers. Also out of bounds is any behaviour that
+depends on recognising particular scenarios rather than reasoning from their
+cues.
