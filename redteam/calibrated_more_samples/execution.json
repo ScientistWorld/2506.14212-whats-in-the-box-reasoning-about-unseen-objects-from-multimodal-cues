@@ -1,0 +1,55 @@
+{
+  "alpha": 0.6977506647256402,
+  "training_scenarios": [
+    "scenario_a_yoga_laptop_pillow",
+    "scenario_b_jug_bottle_coins",
+    "scenario_c_mug_book_scarf"
+  ],
+  "num_train_queries": 9,
+  "name": "calibrated_more_samples",
+  "config": {
+    "kind": "calibrated",
+    "samples": 10000,
+    "seed": 17,
+    "fixed_baselines": true
+  },
+  "train": {
+    "command": [
+      "bash",
+      "scripts/evaluate_train.sh"
+    ],
+    "returncode": 0,
+    "seconds": 0.11444202900747769,
+    "output": "{\n  \"experiments\": {\n    \"witb_human_alignment\": {\n      \"slice\": \"train\",\n      \"scenario_ids\": [\n        \"scenario_a_yoga_laptop_pillow\",\n        \"scenario_b_jug_bottle_coins\",\n        \"scenario_c_mug_book_scarf\"\n      ],\n      \"results\": {\n        \"full_neurosymbolic\": {\n          \"human_correlation\": 0.9860843394577997,\n          \"mean_absolute_error\": 0.03699298189076146,\n          \"brier_score\": 0.0018542939721342194,\n          \"within_scenario_rank_accuracy\": 1.0,\n          \"multimodal_gain_over_best_unimodal\": 0.2519570909258887,\n          \"gain_over_late_fusion\": 0.07026417330656443\n        }\n      },\n      \"_diagnostics\": {\n        \"uniform_chance_baseline\": {\n          \"_mean_hypotheses\": 0.0,\n          \"_num_scenarios\": 3.0\n        },\n        \"audio_only_ablation\": {\n          \"_mean_hypotheses\": 0.0,\n          \"_num_scenarios\": 3.0\n        },\n        \"full_neurosymbolic\": {\n          \"_mean_hypotheses\": 6.0,\n          \"_num_scenarios\": 3.0\n        },\n        \"vision_only_ablation\": {\n          \"_mean_hypotheses\": 6.0,\n          \"_num_scenarios\": 3.0\n        },\n        \"late_fusion_average\": {\n          \"_human_correlation\": 0.9158201661512353,\n          \"_mean_absolute_error\": 0.0927760756011429\n        }\n      }\n    }\n  }\n}\n"
+  },
+  "test": {
+    "command": [
+      "bash",
+      "scripts/evaluate_test.sh"
+    ],
+    "returncode": 0,
+    "seconds": 0.10968549098470248,
+    "output": "{\n  \"experiments\": {\n    \"witb_human_alignment\": {\n      \"slice\": \"test\",\n      \"scenario_ids\": [\n        \"scenario_d_plate_spoon_towel\",\n        \"scenario_e_flashlight_keys_sponge\"\n      ],\n      \"results\": {\n        \"full_neurosymbolic\": {\n          \"human_correlation\": 0.9742425095995456,\n          \"mean_absolute_error\": 0.045164651551584147,\n          \"brier_score\": 0.003182528438539453,\n          \"within_scenario_rank_accuracy\": 1.0,\n          \"multimodal_gain_over_best_unimodal\": 0.041062094682341566,\n          \"gain_over_late_fusion\": 0.01997453088953194\n        }\n      },\n      \"_diagnostics\": {\n        \"full_neurosymbolic\": {\n          \"_mean_hypotheses\": 6.0,\n          \"_num_scenarios\": 2.0\n        },\n        \"late_fusion_average\": {\n          \"_human_correlation\": 0.9542679787100137,\n          \"_mean_absolute_error\": 0.055626704002086226\n        }\n      }\n    }\n  }\n}\n"
+  },
+  "total_seconds": 0.25001883797813207,
+  "hypotheses_per_scenario": {
+    "scenario_a_yoga_laptop_pillow": 6,
+    "scenario_b_jug_bottle_coins": 6,
+    "scenario_c_mug_book_scarf": 6,
+    "scenario_d_plate_spoon_towel": 6,
+    "scenario_e_flashlight_keys_sponge": 6
+  },
+  "score_file_rewritten": true,
+  "score_file_stale_after_failure": false,
+  "artifact_methods_on_disk": [
+    "uniform_chance",
+    "witb_audio",
+    "witb_full",
+    "witb_vision"
+  ],
+  "test_results_methods": [
+    "full_neurosymbolic"
+  ],
+  "test_entrypoint_sha256": "4c091bfa5def7cd9e7d7df0994c273a195ea42ae090db36771d3e8bd0d23fe31",
+  "test_evaluator_sha256": "604b9a2da1386c68e216d7e15ca20195cf80ee8b004bd2098d8a27e81f40ba95"
+}

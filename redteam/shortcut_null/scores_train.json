@@ -1,0 +1,44 @@
+{
+  "experiments": {
+    "witb_human_alignment": {
+      "slice": "train",
+      "scenario_ids": [
+        "scenario_a_yoga_laptop_pillow",
+        "scenario_b_jug_bottle_coins",
+        "scenario_c_mug_book_scarf"
+      ],
+      "results": {
+        "full_neurosymbolic": {
+          "human_correlation": 0.9852104453220909,
+          "mean_absolute_error": 0.11071883161662399,
+          "brier_score": 0.014221948999468622,
+          "within_scenario_rank_accuracy": 1.0,
+          "multimodal_gain_over_best_unimodal": 0.25108319679017976,
+          "gain_over_late_fusion": 0.06939027917085572
+        }
+      },
+      "_diagnostics": {
+        "uniform_chance_baseline": {
+          "_mean_hypotheses": 0.0,
+          "_num_scenarios": 3.0
+        },
+        "audio_only_ablation": {
+          "_mean_hypotheses": 0.0,
+          "_num_scenarios": 3.0
+        },
+        "full_neurosymbolic": {
+          "_mean_hypotheses": 6.0,
+          "_num_scenarios": 3.0
+        },
+        "vision_only_ablation": {
+          "_mean_hypotheses": 6.0,
+          "_num_scenarios": 3.0
+        },
+        "late_fusion_average": {
+          "_human_correlation": 0.9158201661512352,
+          "_mean_absolute_error": 0.09277607560114291
+        }
+      }
+    }
+  }
+}

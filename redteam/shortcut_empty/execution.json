@@ -1,0 +1,39 @@
+{
+  "name": "shortcut_empty",
+  "config": {
+    "kind": "shortcut_empty"
+  },
+  "train": {
+    "command": [
+      "bash",
+      "scripts/evaluate_train.sh"
+    ],
+    "returncode": 1,
+    "seconds": 0.14225661600357853,
+    "output": "witb_full predictions are missing train scenarios: ['scenario_a_yoga_laptop_pillow', 'scenario_b_jug_bottle_coins', 'scenario_c_mug_book_scarf']\n"
+  },
+  "test": {
+    "command": [
+      "bash",
+      "scripts/evaluate_test.sh"
+    ],
+    "returncode": 1,
+    "seconds": 0.08822959801182151,
+    "output": "witb_full predictions are missing test scenarios: ['scenario_d_plate_spoon_towel', 'scenario_e_flashlight_keys_sponge']\n"
+  },
+  "total_seconds": 0.25052902998868376,
+  "hypotheses_per_scenario": {},
+  "score_file_rewritten": false,
+  "score_file_stale_after_failure": true,
+  "artifact_methods_on_disk": [
+    "uniform_chance",
+    "witb_audio",
+    "witb_full",
+    "witb_vision"
+  ],
+  "test_results_methods": [
+    "full_neurosymbolic"
+  ],
+  "test_entrypoint_sha256": "4c091bfa5def7cd9e7d7df0994c273a195ea42ae090db36771d3e8bd0d23fe31",
+  "test_evaluator_sha256": "604b9a2da1386c68e216d7e15ca20195cf80ee8b004bd2098d8a27e81f40ba95"
+}

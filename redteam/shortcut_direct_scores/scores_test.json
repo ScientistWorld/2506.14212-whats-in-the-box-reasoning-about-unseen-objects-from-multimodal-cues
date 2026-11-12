@@ -1,0 +1,31 @@
+{
+  "experiments": {
+    "witb_human_alignment": {
+      "slice": "test",
+      "scenario_ids": [
+        "scenario_d_plate_spoon_towel",
+        "scenario_e_flashlight_keys_sponge"
+      ],
+      "results": {
+        "full_neurosymbolic": {
+          "human_correlation": 0.0,
+          "mean_absolute_error": 0.19000000000000003,
+          "brier_score": 0.050066666666666676,
+          "within_scenario_rank_accuracy": 0.0,
+          "multimodal_gain_over_best_unimodal": -0.933180414917204,
+          "gain_over_late_fusion": -0.9542679787100137
+        }
+      },
+      "_diagnostics": {
+        "full_neurosymbolic": {
+          "_mean_hypotheses": 6.0,
+          "_num_scenarios": 2.0
+        },
+        "late_fusion_average": {
+          "_human_correlation": 0.9542679787100137,
+          "_mean_absolute_error": 0.055626704002086226
+        }
+      }
+    }
+  }
+}
