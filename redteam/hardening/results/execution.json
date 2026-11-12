@@ -1,0 +1,15 @@
+{
+  "fit_rc": 0,
+  "main_train_rc": 0,
+  "main_test_rc": 0,
+  "mutating_test_rc": 0,
+  "mutating_changed_visible_labels": true,
+  "mutating_planted_baselines": [
+    "audio_only_ablation.json",
+    "late_fusion_average.json",
+    "uniform_chance.json",
+    "vision_only_ablation.json"
+  ],
+  "late_train_rc": 0,
+  "late_test_rc": 0
+}

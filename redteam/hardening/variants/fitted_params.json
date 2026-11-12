@@ -1,0 +1,35 @@
+{
+  "_train_log_loss_reference": 0.3776568431651497,
+  "visual_floor": {
+    "beta": 1.0,
+    "eps": 0.002,
+    "gamma": 0.6,
+    "_train_log_loss": 0.2717978559388661
+  },
+  "cue_weights": {
+    "eps": 0.002,
+    "gamma": 0.6,
+    "beta": 1.2,
+    "_train_log_loss": 0.2657175966698014
+  },
+  "weight_cue": {
+    "sigma_w": 0.35,
+    "tare": 6e-05,
+    "eps": 0.001,
+    "gamma": 0.39999999999999997,
+    "beta": 1.3499999999999999,
+    "_train_log_loss": 0.17985811349259467
+  },
+  "weight_only": {
+    "use_vision": false,
+    "use_audio": false,
+    "sigma_w": 0.35,
+    "tare": 6e-05,
+    "_train_log_loss": 0.4645402627871813
+  },
+  "trained_late_fusion": {
+    "bias": 28630.403858919817,
+    "w_audio": 447304.5012956709,
+    "w_vision": 332760.7098592805
+  }
+}

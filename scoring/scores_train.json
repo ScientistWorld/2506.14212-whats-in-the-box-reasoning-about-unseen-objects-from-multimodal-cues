@@ -1,42 +1,42 @@
 {
   "experiments": {
-    "witb_human_alignment": {
-      "slice": "train",
-      "scenario_ids": [
-        "scenario_a_yoga_laptop_pillow",
-        "scenario_b_jug_bottle_coins",
-        "scenario_c_mug_book_scarf"
-      ],
+    "witb_placement_inference": {
+      "split": "train",
+      "num_scenarios": 240,
+      "num_objects": 881,
       "results": {
         "full_neurosymbolic": {
-          "human_correlation": 0.9852104453220909,
-          "mean_absolute_error": 0.11071883161662399,
-          "brier_score": 0.014221948999468622,
-          "within_scenario_rank_accuracy": 1.0,
-          "multimodal_gain_over_best_unimodal": 0.25108319679017976,
-          "gain_over_late_fusion": 0.06939027917085572
+          "truth_correlation": 0.7985442884655406,
+          "brier_score": 0.09079403031884054,
+          "log_loss": 0.3777984363490658
         }
       },
       "_diagnostics": {
-        "uniform_chance_baseline": {
-          "_mean_hypotheses": 0.0,
-          "_num_scenarios": 3.0
-        },
-        "audio_only_ablation": {
-          "_mean_hypotheses": 0.0,
-          "_num_scenarios": 3.0
-        },
         "full_neurosymbolic": {
-          "_mean_hypotheses": 6.0,
-          "_num_scenarios": 3.0
-        },
-        "vision_only_ablation": {
-          "_mean_hypotheses": 6.0,
-          "_num_scenarios": 3.0
+          "runtime_s": 9.36,
+          "status": "ok"
+        }
+      },
+      "_baselines": {
+        "audio_only_ablation": {
+          "truth_correlation": 0.7533543447489551,
+          "brier_score": 0.10986672226338946,
+          "log_loss": 0.3556234963339302
         },
         "late_fusion_average": {
-          "_human_correlation": 0.9158201661512352,
-          "_mean_absolute_error": 0.09277607560114291
+          "truth_correlation": 0.7645128900393761,
+          "brier_score": 0.11933975745284774,
+          "log_loss": 0.39431624373410173
+        },
+        "uniform_chance": {
+          "truth_correlation": 0.0,
+          "brier_score": 0.25,
+          "log_loss": 0.6931471805599378
+        },
+        "vision_only_ablation": {
+          "truth_correlation": 0.4726099909646448,
+          "brier_score": 0.1983112243387692,
+          "log_loss": 0.6538501702526213
         }
       }
     }

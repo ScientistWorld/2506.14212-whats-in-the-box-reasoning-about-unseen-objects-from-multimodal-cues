@@ -1,0 +1,265 @@
+{
+  "experiments": {
+    "witb_placement_inference": {
+      "split": "train",
+      "num_scenarios": 240,
+      "num_objects": 881,
+      "results": {
+        "better_cue_weights": {
+          "truth_correlation": 0.8168667119999664,
+          "brier_score": 0.08321103130138964,
+          "log_loss": 0.26571759666980127
+        },
+        "better_visual_floor": {
+          "truth_correlation": 0.8152435486081278,
+          "brier_score": 0.08421041488202254,
+          "log_loss": 0.2717978559388661
+        },
+        "better_weight_cue": {
+          "truth_correlation": 0.8836974806380348,
+          "brier_score": 0.054770000181269284,
+          "log_loss": 0.1798581134925946
+        },
+        "full_neurosymbolic": {
+          "truth_correlation": 0.7985442884655406,
+          "brier_score": 0.09079403031884054,
+          "log_loss": 0.3777984363490658
+        },
+        "ref_samples5000": {
+          "truth_correlation": 0.809274957542087,
+          "brier_score": 0.08632803954779611,
+          "log_loss": 0.31926737622688944
+        },
+        "ref_seed29": {
+          "truth_correlation": 0.8002992702264333,
+          "brier_score": 0.09006310463873957,
+          "log_loss": 0.37175440533465587
+        },
+        "ref_seed43": {
+          "truth_correlation": 0.7952147547643279,
+          "brier_score": 0.09217362055455418,
+          "log_loss": 0.3740207278062374
+        },
+        "sc_constant": {
+          "truth_correlation": 0.0,
+          "brier_score": 0.25,
+          "log_loss": 0.6931471805599378
+        },
+        "sc_copy_train_labels": {
+          "truth_correlation": 1.0,
+          "brier_score": 0.0,
+          "log_loss": 0.0
+        },
+        "sc_crash": {
+          "truth_correlation": -1.0,
+          "brier_score": 1.0,
+          "log_loss": 9.210340371976182
+        },
+        "sc_extreme": {
+          "truth_correlation": 0.7797956867196367,
+          "brier_score": 0.11010215664018161,
+          "log_loss": 1.014078338344709
+        },
+        "sc_missing_half": {
+          "truth_correlation": -1.0,
+          "brier_score": 1.0,
+          "log_loss": 9.210340371976182
+        },
+        "sc_nan": {
+          "truth_correlation": -1.0,
+          "brier_score": 1.0,
+          "log_loss": 9.210340371976182
+        },
+        "sc_near_constant": {
+          "truth_correlation": 0.7985442884650932,
+          "brier_score": 0.249999669529149,
+          "log_loss": 0.6931465196182433
+        },
+        "sc_out_of_range": {
+          "truth_correlation": -1.0,
+          "brier_score": 1.0,
+          "log_loss": 9.210340371976182
+        },
+        "sc_read_hidden": {
+          "truth_correlation": 0.0,
+          "brier_score": 0.25,
+          "log_loss": 0.6931471805599378
+        },
+        "sc_self_report": {
+          "truth_correlation": 0.7985442884655406,
+          "brier_score": 0.09079403031884054,
+          "log_loss": 0.3777984363490658
+        },
+        "sc_train_memorizer": {
+          "truth_correlation": 1.0,
+          "brier_score": 0.0,
+          "log_loss": 0.0
+        },
+        "sc_unnormalized": {
+          "truth_correlation": -1.0,
+          "brier_score": 1.0,
+          "log_loss": 9.210340371976182
+        },
+        "simple_trained_late_fusion": {
+          "truth_correlation": 0.7525539160045402,
+          "brier_score": 0.12372304199772985,
+          "log_loss": 1.139531328655394
+        },
+        "weaker_audio_only": {
+          "truth_correlation": 0.7533543447489551,
+          "brier_score": 0.10986672226338946,
+          "log_loss": 0.3556234963339302
+        },
+        "weaker_late_fusion": {
+          "truth_correlation": 0.7645128900393761,
+          "brier_score": 0.11933975745284774,
+          "log_loss": 0.39431624373410173
+        },
+        "weaker_one_sample": {
+          "truth_correlation": 0.5885025089443201,
+          "brier_score": 0.17200578612167272,
+          "log_loss": 0.9365889633149681
+        },
+        "weaker_vision_only": {
+          "truth_correlation": 0.4726099909646448,
+          "brier_score": 0.1983112243387692,
+          "log_loss": 0.6538501702526213
+        },
+        "weaker_weight_only": {
+          "truth_correlation": 0.596319352400084,
+          "brier_score": 0.16111450526343746,
+          "log_loss": 0.4645402627871813
+        }
+      },
+      "_diagnostics": {
+        "better_cue_weights": {
+          "runtime_s": 0.32,
+          "status": "ok"
+        },
+        "better_visual_floor": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        },
+        "better_weight_cue": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        },
+        "full_neurosymbolic": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        },
+        "ref_samples5000": {
+          "runtime_s": 42.52,
+          "status": "ok"
+        },
+        "ref_seed29": {
+          "runtime_s": 8.65,
+          "status": "ok"
+        },
+        "ref_seed43": {
+          "runtime_s": 8.23,
+          "status": "ok"
+        },
+        "sc_constant": {
+          "runtime_s": 0.22,
+          "status": "ok"
+        },
+        "sc_copy_train_labels": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        },
+        "sc_crash": {
+          "runtime_s": 0.27,
+          "status": "failed",
+          "reason": "exit code 3"
+        },
+        "sc_extreme": {
+          "runtime_s": 0.21,
+          "status": "ok"
+        },
+        "sc_missing_half": {
+          "runtime_s": 0.21,
+          "status": "failed",
+          "reason": "invalid output: missing scenario 'witb_7522f9fdb1'"
+        },
+        "sc_nan": {
+          "runtime_s": 0.22,
+          "status": "failed",
+          "reason": "invalid output: scenario 'witb_ab402d40e4' object 'headphone case': probability outside [0, 1]"
+        },
+        "sc_near_constant": {
+          "runtime_s": 0.21,
+          "status": "ok"
+        },
+        "sc_out_of_range": {
+          "runtime_s": 0.22,
+          "status": "failed",
+          "reason": "invalid output: scenario 'witb_ab402d40e4' object 'headphone case': probability outside [0, 1]"
+        },
+        "sc_read_hidden": {
+          "runtime_s": 0.32,
+          "status": "ok"
+        },
+        "sc_self_report": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        },
+        "sc_train_memorizer": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        },
+        "sc_unnormalized": {
+          "runtime_s": 0.22,
+          "status": "failed",
+          "reason": "invalid output: scenario 'witb_ab402d40e4' object 'headphone case': probabilities sum to 2.000000, not 1"
+        },
+        "simple_trained_late_fusion": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        },
+        "weaker_audio_only": {
+          "runtime_s": 0.22,
+          "status": "ok"
+        },
+        "weaker_late_fusion": {
+          "runtime_s": 0.32,
+          "status": "ok"
+        },
+        "weaker_one_sample": {
+          "runtime_s": 0.32,
+          "status": "ok"
+        },
+        "weaker_vision_only": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        },
+        "weaker_weight_only": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        }
+      },
+      "_baselines": {
+        "audio_only_ablation": {
+          "truth_correlation": 0.7533543447489551,
+          "brier_score": 0.10986672226338946,
+          "log_loss": 0.3556234963339302
+        },
+        "late_fusion_average": {
+          "truth_correlation": 0.7645128900393761,
+          "brier_score": 0.11933975745284774,
+          "log_loss": 0.39431624373410173
+        },
+        "uniform_chance": {
+          "truth_correlation": 0.0,
+          "brier_score": 0.25,
+          "log_loss": 0.6931471805599378
+        },
+        "vision_only_ablation": {
+          "truth_correlation": 0.4726099909646448,
+          "brier_score": 0.1983112243387692,
+          "log_loss": 0.6538501702526213
+        }
+      }
+    }
+  }
+}
