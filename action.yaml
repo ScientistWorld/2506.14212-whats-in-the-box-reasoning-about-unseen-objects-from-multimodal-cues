@@ -1,4 +1,8 @@
-action: submit
+# Once you set action to 'submit' or 'done', STOP immediately.
+# Do NOT sleep, poll, or wait for jobs. The system reads this file
+# only after your turn ends.
+action: pending
 gpus: 0
 test: false
-notes: "Two final artifact-only audit checks: near-constant probabilities with fixed versus replaced baselines; reuse reference predictions and recompute aggregate ranks."
+milestone: secondary_claims
+notes: ""
