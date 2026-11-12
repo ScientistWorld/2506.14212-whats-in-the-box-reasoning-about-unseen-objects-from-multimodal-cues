@@ -1,34 +1,21 @@
 #!/bin/bash
-# Run a baseline method from the paper.
+# Run the paper's comparison baselines (audio-only Eq. 3, vision-only,
+# late-fusion average) and a chance baseline on the visible train scenarios.
+# Predictions go to outputs/baselines/.  The evaluators report the fixed copies
+# of these baselines under "_baselines" in the score files.
 #
-# Baselines are simple reference methods the paper compares against. 
-# Implement this only if applicable, i.e. the paper has baselines.
-# You do not need to implement all baselines to begin — 
-# just enough to validate that the evaluation pipeline works 
-# and provide a reference point. You can decide to expand more baselines later.
-# Each baseline must be actually run and scored through evaluate.sh
-# so the numbers are verified, not self-reported.
-# You can decide what this baseline script should do yourself.
-#
-# Usage:
-#   bash scripts/baseline.sh <name>
-
-set -e
-
+# Usage: bash scripts/baseline.sh [audio_only_ablation|vision_only_ablation|late_fusion_average|uniform_chance|all]
+set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
-
-SAMPLES="${SAMPLES:-1000}"
-SEED="${SEED:-17}"
-DATA_PATH="${DATA_PATH:-data/witb_parsed_benchmark.json}"
-OUTPUT_DIR="${OUTPUT_DIR:-outputs}"
 WHICH="${1:-all}"
-
-mkdir -p "$OUTPUT_DIR"
-python baseline/witb_baselines.py \
-  --data "$DATA_PATH" \
-  --output-dir "$OUTPUT_DIR" \
-  --samples "$SAMPLES" \
-  --seed "$SEED" \
-  --which "$WHICH"
-
-bash scripts/evaluate.sh "$OUTPUT_DIR" "$DATA_PATH"
+CACHE_ARGS=()
+if [ -n "${WITB_CACHE_DIR:-}" ]; then
+  CACHE_ARGS=(--cache-dir "$WITB_CACHE_DIR")
+fi
+python3 baseline/witb_baselines.py \
+  --data data/witb_train.json \
+  --output-dir outputs/baselines \
+  --which "$WHICH" \
+  --samples 1000 \
+  --seed 17 \
+  ${CACHE_ARGS[@]+"${CACHE_ARGS[@]}"}

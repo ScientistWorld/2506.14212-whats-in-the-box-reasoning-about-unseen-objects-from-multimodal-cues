@@ -1,35 +1,12 @@
 #!/bin/bash
-# Evaluation script — the standard way to evaluate work in this environment.
+# Development evaluation on the visible data: runs every predictor in
+# method/predictors/*.sh on data/witb_train.json and writes scoring/scores.json
+# (same numbers as scripts/evaluate_train.sh).  Takes no arguments.
 #
-# This script must be SELF-CONTAINED using only code in eval/.
-# Do NOT import from method/ — evaluate.sh must work even when the
-# paper's method code is hidden from a scientist agent.
-#
-# Design it so that anyone following the same output format can run
-# this script to evaluate their results.
-#
-# OUTPUT CONTRACT: This script MUST write scoring/scores.json containing
-# a JSON dict nested by experiment, e.g.:
-#   {"imagenet_classification": {"top1_accuracy": 82.1, "top5_accuracy": 94.8}}
-# Experiment and metric names must match the keys in scoring/reference.json.
-# This file is read by the system for automated comparison.
-#
-# Example usage:
-#   ./evaluate.sh <method_and_run_name>                             # evaluate with defaults
-#   ./evaluate.sh <method_and_run_name> checkpoints/epoch_10.pt     # evaluate a specific checkpoint
-#
-# Called from run.sh after training, or independently.
-
-set -e
-
+# Evaluation code lives in eval/ and never imports method/.  A method plugs in
+# only through the predictor contract:
+#   bash method/predictors/<name>.sh INPUT_JSON OUTPUT_JSON
+set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
-
 mkdir -p scoring
-
-PREDICTIONS_DIR="${1:-outputs}"
-DATA_PATH="${2:-data/witb_parsed_benchmark.json}"
-
-python eval/evaluate_witb.py \
-  --data "$DATA_PATH" \
-  --predictions-dir "$PREDICTIONS_DIR" \
-  --scores scoring/scores.json
+python3 eval/train/evaluate_witb_train.py --scores scoring/scores.json

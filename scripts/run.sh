@@ -1,17 +1,29 @@
 #!/bin/bash
-# Regenerate method, ablation, and diagnostic predictions, then score the full,
-# visible train, and held-out test slices.
-
+# End-to-end job: fixed comparison baselines, reproduction on visible data,
+# hardening audit through the hidden test, then the reference-only score files
+# (computed from scratch, as a fresh hidden-test container would).
 set -euo pipefail
-
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
+ROOT="$(pwd)"
+START=$(date +%s)
+stamp() { echo "[run.sh] $(( $(date +%s) - START ))s: $*"; }
 
-SAMPLES="${SAMPLES:-1000}"
-SEED="${SEED:-17}"
-OUTPUT_DIR="${OUTPUT_DIR:-outputs}"
-export SAMPLES SEED OUTPUT_DIR
+export WITB_CACHE_DIR="$ROOT/outputs/witb_cache"
 
+stamp "fixed baselines (train + hidden test)"
+bash scripts/build_fixed_baselines.sh
+
+stamp "reproduction on visible data -> scoring/scores.json"
 bash scripts/reproduce.sh
-bash scripts/evaluate_train.sh outputs
-bash scripts/evaluate_test.sh outputs
-python validate.py --compare
+
+if [ -d redteam/hardening ] && [ -f eval/test/witb_test_hidden.json ]; then
+  stamp "hardening audit (variants and shortcuts through the hidden test)"
+  python3 redteam/hardening/audit.py all
+fi
+
+unset WITB_CACHE_DIR
+stamp "reference-only train scores (no cache)"
+bash scripts/evaluate_train.sh
+stamp "reference-only hidden-test scores (no cache)"
+bash scripts/evaluate_test.sh
+stamp "done"

@@ -1,46 +1,41 @@
 {
   "experiments": {
-    "witb_human_alignment": {
-      "description": "What-is-in-the-Box human-judgment alignment across object-box probability ratings, matching the paper's Figure 3 quantitative analysis.",
+    "witb_placement_inference": {
+      "description": "What's-in-the-Box: infer which of two boxes holds each listed household object from parsed object descriptions, box measurements and per-box sound-classifier posteriors. Scored on 800 hidden scenarios (2,841 object queries) against the objects' true placements. This replaces the paper's correlation with 54 participants' mean ratings on 20 videos, which were never released (see _paper_reported).",
       "weight": 1.0,
-      "primary_metric": "human_correlation",
+      "primary_metric": "truth_correlation",
       "metrics": {
-        "human_correlation": {
+        "truth_correlation": {
           "higher_is_better": true,
           "coefficient": 1.0,
-          "description": "Correlation between method object-left probabilities and human object-left ratings."
-        },
-        "mean_absolute_error": {
-          "higher_is_better": false,
-          "coefficient": -0.35,
-          "description": "Mean absolute probability error against human object-left ratings; catches methods that preserve rank order but miscalibrate probabilities."
+          "description": "Pearson correlation, over every (object, box) query, between the predicted probability that the object is in that box and whether it actually is. Same statistic the paper uses (Figure 3: correlation over object-in-box ratings), with true placements as the target."
         },
         "brier_score": {
           "higher_is_better": false,
-          "coefficient": -0.25,
-          "description": "Mean squared probability error against human object-left ratings; penalizes overconfident probability mistakes more strongly than MAE."
+          "coefficient": 1.0,
+          "description": "Mean over objects of half the squared error between the predicted box distribution and the true box (proper scoring rule; penalises both poor discrimination and miscalibration)."
         },
-        "within_scenario_rank_accuracy": {
-          "higher_is_better": true,
-          "coefficient": 0.35,
-          "description": "Pairwise ranking accuracy among objects within each scenario; catches global correlation shortcuts that miss scenario-local judgments."
-        },
-        "multimodal_gain_over_best_unimodal": {
-          "higher_is_better": true,
+        "log_loss": {
+          "higher_is_better": false,
           "coefficient": 0.5,
-          "description": "Improvement in human-correlation score over the stronger of the audio-only and vision-only artifacts."
-        },
-        "gain_over_late_fusion": {
-          "higher_is_better": true,
-          "coefficient": 0.3,
-          "description": "Improvement in human-correlation score over a simple average of audio-only and vision-only probabilities."
+          "description": "Mean negative log probability assigned to each object's true box, with probabilities floored at 1e-4 (proper scoring rule; penalises confident mistakes)."
         }
       },
       "results": {
-        "full_neurosymbolic": {"type": "proposed", "human_correlation": 0.78, "multimodal_gain_over_best_unimodal": 0.23},
-        "audio_only_ablation": {"type": "baseline", "human_correlation": 0.55},
-        "vision_only_ablation": {"type": "baseline", "human_correlation": 0.52},
-        "gemini_2_flash": {"type": "baseline", "human_correlation": 0.31}
+        "full_neurosymbolic": {
+          "type": "proposed",
+          "truth_correlation": 0.0,
+          "brier_score": 0.0,
+          "log_loss": 0.0
+        }
+      },
+      "_paper_reported": {
+        "note": "Paper (arXiv 2506.14212, Figure 3): Pearson r between model ratings and mean human ratings over 20 stimuli (2-5 objects, 2 boxes, 54 participants). The gym's target is the true placement on synthetic hidden scenarios, so these numbers are not on the gym's scale and are not matched.",
+        "metric": "human_correlation",
+        "full_neurosymbolic": 0.78,
+        "audio_only_ablation": 0.55,
+        "vision_only_ablation": 0.52,
+        "gemini_2_flash": 0.31
       }
     }
   }

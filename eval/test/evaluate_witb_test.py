@@ -1,280 +1,266 @@
 #!/usr/bin/env python3
-"""Held-out WiTB test-slice evaluator.
+"""Hidden-test evaluator for What's-in-the-Box placement inference.
 
-Scores method-authored prediction artifacts without importing method code.
-When train scores exist, this evaluator emits the same method keys.
+Runs every method on disk on hidden test scenarios and scores the result.
+
+* A method is an executable ``method/predictors/<name>.sh`` called as
+  ``bash <predictor> INPUT_JSON OUTPUT_JSON``.  INPUT_JSON holds scenarios
+  without labels; OUTPUT_JSON must give, for every scenario id and every object
+  name, a probability for each box (``box_probs``).
+* Hidden scenarios and their true placements live only in this directory and
+  are loaded into memory before any predictor runs.  Predictors receive a copy
+  of the inputs in a temporary directory outside the workspace, and this
+  directory is made unreadable while they run.
+* Every number is recomputed here from raw probabilities; nothing a method
+  writes besides ``box_probs`` is read.  A predictor that crashes, times out,
+  or returns an incomplete or invalid distribution is marked failed and gets
+  the worst value of every scored metric.  The score file is first written
+  with worst values for every discovered method, so an interrupted evaluation
+  never leaves stale scores behind.
+* Single-cue and chance comparison numbers come from fixed prediction files
+  stored here (``fixed_baselines_test.json``); they are diagnostics only.
 """
 
 from __future__ import annotations
 
-import argparse
 import json
 import math
+import os
+import shutil
+import signal
+import stat
+import subprocess
+import sys
+import tempfile
+import time
 from pathlib import Path
 
-
-SLICE = "test"
-SCENARIO_IDS = {
-    "scenario_d_plate_spoon_towel",
-    "scenario_e_flashlight_keys_sponge",
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+HIDDEN_PATH = HERE / "witb_test_hidden.json"
+FIXED_BASELINES_PATH = HERE / "fixed_baselines_test.json"
+PREDICTORS_DIR = ROOT / "method" / "predictors"
+SCORES_PATH = ROOT / "scoring" / "scores_test.json"
+LOG_DIR = ROOT / "outputs" / "eval_logs" / "test"
+EXPERIMENT = "witb_placement_inference"
+PROB_FLOOR = 1e-4
+SUM_TOL = 1e-3
+PREDICT_TIMEOUT_S = 2 * 60 * 60
+WORST = {
+    "truth_correlation": -1.0,
+    "brier_score": 1.0,
+    "log_loss": -math.log(PROB_FLOOR),
 }
 
-METHOD_MAP = {
-    "witb_full": "full_neurosymbolic",
-    "witb_audio": "audio_only_ablation",
-    "witb_vision": "vision_only_ablation",
-    "uniform_chance": "uniform_chance_baseline",
-}
-SPLIT_DIAGNOSTIC_METHODS = {
-    "audio_only_ablation",
-    "vision_only_ablation",
-    "uniform_chance_baseline",
-}
 
-
-def pearson(xs: list[float], ys: list[float]) -> float:
-    if len(xs) < 2:
-        return 0.0
-    mx = sum(xs) / len(xs)
-    my = sum(ys) / len(ys)
-    vx = sum((x - mx) ** 2 for x in xs)
-    vy = sum((y - my) ** 2 for y in ys)
-    if vx <= 0 or vy <= 0:
-        return 0.0
-    cov = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
-    return cov / math.sqrt(vx * vy)
-
-
-def mean_absolute_error(xs: list[float], ys: list[float]) -> float:
-    return sum(abs(x - y) for x, y in zip(xs, ys)) / max(1, len(xs))
-
-
-def brier_score(xs: list[float], ys: list[float]) -> float:
-    return sum((x - y) ** 2 for x, y in zip(xs, ys)) / max(1, len(xs))
-
-
-def within_scenario_rank_accuracy(
-    scenario_values: list[tuple[list[float], list[float]]],
-) -> float:
-    correct = 0
-    total = 0
-    for pred_values, target_values in scenario_values:
-        for left in range(len(pred_values)):
-            for right in range(left + 1, len(pred_values)):
-                target_delta = target_values[left] - target_values[right]
-                if target_delta == 0:
-                    continue
-                pred_delta = pred_values[left] - pred_values[right]
-                total += 1
-                if pred_delta * target_delta > 0:
-                    correct += 1
-    return correct / max(1, total)
-
-
-def load_targets(data_path: Path) -> dict[str, dict[str, float]]:
-    data = json.loads(data_path.read_text())
-    targets = {}
+def load_hidden() -> tuple[list[dict], list[dict[str, int]]]:
+    data = json.loads(HIDDEN_PATH.read_text())
+    inputs, truth = [], []
     for scenario in data["scenarios"]:
-        if scenario["id"] in SCENARIO_IDS:
-            targets[scenario["id"]] = scenario["human_left_prob"]
-    missing = sorted(SCENARIO_IDS - targets.keys())
-    if missing:
-        raise SystemExit(f"Test slice scenario ids missing from {data_path}: {missing}")
-    return targets
+        visible = {k: v for k, v in scenario.items() if k != "true_box"}
+        inputs.append(visible)
+        truth.append({name: int(b) for name, b in scenario["true_box"].items()})
+    return inputs, truth
 
 
-def load_train_methods(train_scores: Path) -> set[str] | None:
-    if not train_scores.exists():
-        return None
-    payload = json.loads(train_scores.read_text())
-    exp = payload.get("experiments", {}).get("witb_human_alignment", {})
-    methods = exp.get("results", {})
-    if not isinstance(methods, dict) or not methods:
-        raise SystemExit(f"No method results found in {train_scores}")
-    return set(methods)
+def discover_predictors() -> list[Path]:
+    if not PREDICTORS_DIR.is_dir():
+        return []
+    return sorted(p for p in PREDICTORS_DIR.glob("*.sh") if p.is_file())
 
 
-def split_scored_methods(
-    results: dict[str, dict[str, float]], required_methods: set[str] | None
-) -> list[str]:
-    """Return method keys for held-out split scoring.
-
-    The split files are used as anti-shortcut diagnostics over a small fixed
-    scenario slice. They should mirror the train-slice method keys, while
-    ablation artifacts remain diagnostics for computing gain metrics.
-    """
-    if required_methods is not None:
-        missing = sorted(required_methods - results.keys())
-        if missing:
-            raise SystemExit(f"Missing prediction artifacts for train-scored methods: {missing}")
-        return sorted(required_methods)
-    methods = sorted(
-        method for method in results
-        if method not in SPLIT_DIAGNOSTIC_METHODS
-    )
-    if not methods:
-        raise SystemExit("No candidate method prediction artifacts found")
-    return methods
-
-
-def flatten_prediction(
-    pred: dict, targets: dict[str, dict[str, float]]
-) -> tuple[list[float], list[float], list[float], list[tuple[list[float], list[float]]]]:
-    pred_values = []
-    target_values = []
-    hyp_counts = []
-    scenario_values = []
-    scenario_ids = [scenario["scenario_id"] for scenario in pred["scenarios"]]
-    duplicates = sorted({sid for sid in scenario_ids if scenario_ids.count(sid) > 1})
-    if duplicates:
-        method = pred.get("method", "<unknown>")
-        raise SystemExit(f"{method} predictions contain duplicate scenarios: {duplicates}")
-    by_id = {scenario["scenario_id"]: scenario for scenario in pred["scenarios"]}
-    missing = sorted(set(targets) - by_id.keys())
-    if missing:
-        method = pred.get("method", "<unknown>")
-        raise SystemExit(f"{method} predictions are missing test scenarios: {missing}")
-    for sid in sorted(targets):
-        scenario = by_id[sid]
-        hyp_counts.append(float(scenario.get("num_hypotheses", 0)))
-        scenario_pred_values = []
-        scenario_target_values = []
-        for obj_name, target in targets[sid].items():
-            if obj_name not in scenario.get("pred_left_prob", {}):
-                method = pred.get("method", "<unknown>")
-                raise SystemExit(f"{method} predictions for {sid} are missing object {obj_name!r}")
-            value = float(scenario["pred_left_prob"][obj_name])
-            if not math.isfinite(value) or value < 0.0 or value > 1.0:
-                method = pred.get("method", "<unknown>")
-                raise SystemExit(
-                    f"{method} prediction for {sid}/{obj_name} must be a finite probability in [0, 1]"
-                )
-            pred_values.append(value)
-            target_values.append(float(target))
-            scenario_pred_values.append(value)
-            scenario_target_values.append(float(target))
-        scenario_values.append((scenario_pred_values, scenario_target_values))
-    return pred_values, target_values, hyp_counts, scenario_values
+def validate_predictions(payload, inputs: list[dict]) -> list[dict[str, list[float]]]:
+    """Return per-scenario {object: [p_box...]} or raise ValueError."""
+    if not isinstance(payload, dict) or not isinstance(payload.get("scenarios"), list):
+        raise ValueError("output must be a JSON object with a 'scenarios' list")
+    by_id = {}
+    for item in payload["scenarios"]:
+        if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+            raise ValueError("every scenario entry needs a string 'id'")
+        if item["id"] in by_id:
+            raise ValueError(f"duplicate scenario id {item['id']!r}")
+        by_id[item["id"]] = item
+    out = []
+    for scenario in inputs:
+        sid = scenario["id"]
+        if sid not in by_id:
+            raise ValueError(f"missing scenario {sid!r}")
+        box_probs = by_id[sid].get("box_probs")
+        if not isinstance(box_probs, dict):
+            raise ValueError(f"scenario {sid!r} has no 'box_probs' object")
+        k = len(scenario["boxes"])
+        probs = {}
+        for obj in scenario["objects"]:
+            name = obj["name"]
+            values = box_probs.get(name)
+            if not isinstance(values, list) or len(values) != k:
+                raise ValueError(f"scenario {sid!r} object {name!r}: need a list of {k} box probabilities")
+            clean = []
+            for v in values:
+                if isinstance(v, bool) or not isinstance(v, (int, float)):
+                    raise ValueError(f"scenario {sid!r} object {name!r}: non-numeric probability")
+                v = float(v)
+                if not math.isfinite(v) or v < 0.0 or v > 1.0:
+                    raise ValueError(f"scenario {sid!r} object {name!r}: probability outside [0, 1]")
+                clean.append(v)
+            total = sum(clean)
+            if abs(total - 1.0) > SUM_TOL:
+                raise ValueError(f"scenario {sid!r} object {name!r}: box probabilities sum to {total:.6f}, not 1")
+            probs[name] = [v / total for v in clean]
+        out.append(probs)
+    return out
 
 
-def evaluate_payload(pred: dict, targets: dict[str, dict[str, float]]) -> tuple[str, dict[str, float]]:
-    method_name = METHOD_MAP.get(pred["method"], pred["method"])
-    pred_values, target_values, hyp_counts, scenario_values = flatten_prediction(pred, targets)
-    return method_name, {
-        "human_correlation": pearson(pred_values, target_values),
-        "mean_absolute_error": mean_absolute_error(pred_values, target_values),
-        "brier_score": brier_score(pred_values, target_values),
-        "within_scenario_rank_accuracy": within_scenario_rank_accuracy(scenario_values),
-        "_mean_hypotheses": sum(hyp_counts) / max(1, len(hyp_counts)),
-        "_num_scenarios": float(len(targets)),
-    }
-
-
-def late_fusion_average_payload(audio_pred: dict, vision_pred: dict) -> dict:
-    """Average unimodal object probabilities without joint hypothesis inference."""
-    vision_by_sid = {scenario["scenario_id"]: scenario for scenario in vision_pred["scenarios"]}
-    scenarios = []
-    for audio_scenario in audio_pred["scenarios"]:
-        sid = audio_scenario["scenario_id"]
-        if sid not in SCENARIO_IDS:
-            continue
-        vision_scenario = vision_by_sid[sid]
-        pred_left_prob = {}
-        for obj_name, audio_prob in audio_scenario["pred_left_prob"].items():
-            vision_prob = vision_scenario["pred_left_prob"][obj_name]
-            pred_left_prob[obj_name] = 0.5 * (float(audio_prob) + float(vision_prob))
-        scenarios.append(
-            {
-                "scenario_id": sid,
-                "mode": "late_fusion_average",
-                "pred_left_prob": pred_left_prob,
-                "num_hypotheses": 0,
-            }
-        )
+def score(probs: list[dict[str, list[float]]], truth: list[dict[str, int]]) -> dict[str, float]:
+    flat_p, flat_y, briers, losses = [], [], [], []
+    for scen_probs, scen_truth in zip(probs, truth):
+        for name, true_box in scen_truth.items():
+            p = scen_probs[name]
+            sq = 0.0
+            for b, pb in enumerate(p):
+                y = 1.0 if b == true_box else 0.0
+                flat_p.append(pb)
+                flat_y.append(y)
+                sq += (pb - y) ** 2
+            briers.append(0.5 * sq)
+            losses.append(-math.log(max(PROB_FLOOR, p[true_box])))
+    n = len(flat_p)
+    mp = sum(flat_p) / n
+    my = sum(flat_y) / n
+    vp = sum((x - mp) ** 2 for x in flat_p)
+    vy = sum((y - my) ** 2 for y in flat_y)
+    cov = sum((x - mp) * (y - my) for x, y in zip(flat_p, flat_y))
+    corr = cov / math.sqrt(vp * vy) if vp > 0 and vy > 0 else 0.0
     return {
-        "method": "late_fusion_average",
-        "mode": "late_fusion_average",
-        "scenarios": scenarios,
+        "truth_correlation": corr,
+        "brier_score": sum(briers) / len(briers),
+        "log_loss": sum(losses) / len(losses),
     }
 
 
-def prediction_paths(predictions_dir: Path) -> list[Path]:
-    return sorted(path for path in predictions_dir.glob("*_predictions.json") if path.is_file())
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--data", type=Path, default=Path("data/witb_parsed_benchmark.json"))
-    parser.add_argument("--predictions-dir", type=Path, default=Path("outputs"))
-    parser.add_argument("--scores", type=Path, default=Path("scoring/scores_test.json"))
-    parser.add_argument("--train-scores", type=Path, default=Path("scoring/scores_train.json"))
-    args = parser.parse_args()
-
-    required_methods = load_train_methods(args.train_scores)
-    targets = load_targets(args.data)
-    all_results = {}
-    all_diagnostics = {}
-    payloads = {}
-    for path in prediction_paths(args.predictions_dir):
-        pred = json.loads(path.read_text())
-        method, metrics = evaluate_payload(pred, targets)
-        payloads[method] = pred
-        all_results[method] = {k: v for k, v in metrics.items() if not k.startswith("_")}
-        all_diagnostics[method] = {k: v for k, v in metrics.items() if k.startswith("_")}
-    if not all_results:
-        raise SystemExit(f"No prediction files found in {args.predictions_dir}")
-
-    result_methods = split_scored_methods(all_results, required_methods)
-
-    unimodal = [
-        all_results.get("audio_only_ablation", {}).get("human_correlation"),
-        all_results.get("vision_only_ablation", {}).get("human_correlation"),
-    ]
-    if all(x is not None for x in unimodal):
-        best_unimodal = max(unimodal)
-        for method, metrics in all_results.items():
-            if method not in {"audio_only_ablation", "vision_only_ablation"}:
-                metrics["multimodal_gain_over_best_unimodal"] = (
-                    metrics["human_correlation"] - best_unimodal
-                )
-
-    if "audio_only_ablation" in payloads and "vision_only_ablation" in payloads:
-        late_payload = late_fusion_average_payload(
-            payloads["audio_only_ablation"], payloads["vision_only_ablation"]
-        )
-        _, late_metrics = evaluate_payload(late_payload, targets)
-        late_corr = late_metrics["human_correlation"]
-        all_diagnostics["late_fusion_average"] = {
-            "_human_correlation": late_corr,
-            "_mean_absolute_error": late_metrics["mean_absolute_error"],
-        }
-        for method, metrics in all_results.items():
-            if method not in {"audio_only_ablation", "vision_only_ablation"}:
-                metrics["gain_over_late_fusion"] = metrics["human_correlation"] - late_corr
-
-    results = {method: all_results[method] for method in result_methods}
-    diagnostics = {
-        method: all_diagnostics[method]
-        for method in result_methods
-        if method in all_diagnostics
-    }
-    if "late_fusion_average" in all_diagnostics:
-        diagnostics["late_fusion_average"] = all_diagnostics["late_fusion_average"]
-
+def write_scores(results: dict, diagnostics: dict, baselines: dict, meta: dict) -> None:
     payload = {
         "experiments": {
-            "witb_human_alignment": {
-                "slice": SLICE,
-                "scenario_ids": sorted(SCENARIO_IDS),
+            EXPERIMENT: {
+                **meta,
                 "results": results,
                 "_diagnostics": diagnostics,
+                "_baselines": baselines,
             }
         }
     }
-    args.scores.parent.mkdir(parents=True, exist_ok=True)
-    args.scores.write_text(json.dumps(payload, indent=2) + "\n")
-    print(json.dumps(payload, indent=2))
+    SCORES_PATH.parent.mkdir(parents=True, exist_ok=True)
+    tmp = SCORES_PATH.with_name(SCORES_PATH.name + ".tmp")
+    tmp.write_text(json.dumps(payload, indent=2) + "\n")
+    os.replace(tmp, SCORES_PATH)
+
+
+def _set_mode(path: Path, mode: int) -> None:
+    try:
+        os.chmod(path, mode)
+    except OSError:
+        pass
+
+
+def run_predictor(predictor: Path, input_path: Path, output_path: Path, log_path: Path) -> tuple[bool, str, float]:
+    start = time.time()
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    with log_path.open("w") as log:
+        try:
+            proc = subprocess.Popen(
+                ["bash", str(predictor), str(input_path), str(output_path)],
+                cwd=ROOT,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                start_new_session=True,
+            )
+        except OSError as exc:
+            return False, f"could not start predictor: {exc}", time.time() - start
+        try:
+            code = proc.wait(timeout=PREDICT_TIMEOUT_S)
+        except subprocess.TimeoutExpired:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            proc.wait()
+            return False, f"timed out after {PREDICT_TIMEOUT_S} s", time.time() - start
+    if code != 0:
+        return False, f"exit code {code}", time.time() - start
+    return True, "", time.time() - start
+
+
+def fixed_baseline_scores(inputs: list[dict], truth: list[dict[str, int]]) -> dict:
+    if not FIXED_BASELINES_PATH.exists():
+        return {}
+    data = json.loads(FIXED_BASELINES_PATH.read_text())
+    out = {}
+    for name, payload in sorted(data.get("baselines", {}).items()):
+        try:
+            out[name] = score(validate_predictions(payload, inputs), truth)
+        except ValueError as exc:
+            out[name] = {"_error": str(exc)}
+    return out
+
+
+def main() -> int:
+    inputs, truth = load_hidden()
+    baselines = fixed_baseline_scores(inputs, truth)
+    predictors = discover_predictors()
+    meta = {
+        "split": "test",
+        "num_scenarios": len(inputs),
+        "num_objects": sum(len(t) for t in truth),
+    }
+    names = [p.stem for p in predictors]
+    results = {name: dict(WORST) for name in names}
+    diagnostics = {name: {"status": "not_run"} for name in names}
+    write_scores(results, diagnostics, baselines, meta)
+    if not predictors:
+        print(f"No predictors found in {PREDICTORS_DIR}", file=sys.stderr)
+        return 1
+
+    keep_dir = os.environ.get("WITB_KEEP_PREDICTIONS_DIR")
+    work = Path(tempfile.mkdtemp(prefix="witb_"))
+    input_path = work / "scenarios.json"
+    input_path.write_text(json.dumps({"format": "witb-scenarios-v2", "scenarios": inputs}) + "\n")
+    os.chmod(input_path, 0o444)
+    original_mode = stat.S_IMODE(HERE.stat().st_mode)
+    try:
+        for predictor in predictors:
+            name = predictor.stem
+            output_path = work / f"{name}.out.json"
+            _set_mode(HERE, 0)
+            try:
+                ok, reason, seconds = run_predictor(predictor, input_path, output_path, LOG_DIR / f"{name}.log")
+            finally:
+                _set_mode(HERE, original_mode)
+            diag = {"runtime_s": round(seconds, 2)}
+            if ok:
+                try:
+                    payload = json.loads(output_path.read_text())
+                    probs = validate_predictions(payload, inputs)
+                    results[name] = score(probs, truth)
+                    diag["status"] = "ok"
+                    if keep_dir:
+                        Path(keep_dir).mkdir(parents=True, exist_ok=True)
+                        shutil.copyfile(output_path, Path(keep_dir) / f"{name}.json")
+                except (OSError, json.JSONDecodeError, ValueError) as exc:
+                    ok, reason = False, f"invalid output: {exc}"
+            if not ok:
+                results[name] = dict(WORST)
+                diag["status"] = "failed"
+                diag["reason"] = reason[:500]
+                print(f"[evaluate_test] {name}: FAILED ({reason[:200]})", file=sys.stderr)
+            else:
+                print(f"[evaluate_test] {name}: {json.dumps(results[name])}")
+            diagnostics[name] = diag
+            write_scores(results, diagnostics, baselines, meta)
+    finally:
+        _set_mode(HERE, original_mode)
+        shutil.rmtree(work, ignore_errors=True)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
