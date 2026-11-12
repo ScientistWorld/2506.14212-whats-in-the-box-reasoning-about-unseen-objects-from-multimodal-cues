@@ -1,4 +1,4 @@
 action: submit
 gpus: 0
 test: false
-notes: "Run 24 CPU scoring-audit cases: three reference seeds, calibrated and weaker methods, and persistent-artifact shortcuts; save evidence under redteam and restore workspace after each test."
+notes: "Two final artifact-only audit checks: near-constant probabilities with fixed versus replaced baselines; reuse reference predictions and recompute aggregate ranks."
