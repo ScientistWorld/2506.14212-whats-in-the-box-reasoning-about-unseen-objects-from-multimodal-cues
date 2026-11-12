@@ -39,6 +39,7 @@ LOG_DIR = ROOT / "outputs" / "eval_logs" / "train"
 EXPERIMENT = "witb_placement_inference"
 PROB_FLOOR = 1e-4
 SUM_TOL = 1e-3
+RANGE_TOL = 1e-6  # floating-point slack; values are clipped into [0, 1]
 PREDICT_TIMEOUT_S = 2 * 60 * 60
 WORST_VALUES = {
     "truth_correlation": -1.0,
@@ -85,9 +86,9 @@ def check_output(payload, scenarios: list[dict]) -> list[dict[str, list[float]]]
                 if isinstance(value, bool) or not isinstance(value, (int, float)):
                     raise ValueError(f"scenario {sid!r} object {obj['name']!r}: non-numeric probability")
                 value = float(value)
-                if not math.isfinite(value) or value < 0.0 or value > 1.0:
+                if not math.isfinite(value) or value < -RANGE_TOL or value > 1.0 + RANGE_TOL:
                     raise ValueError(f"scenario {sid!r} object {obj['name']!r}: probability outside [0, 1]")
-                row.append(value)
+                row.append(min(1.0, max(0.0, value)))
             total = sum(row)
             if abs(total - 1.0) > SUM_TOL:
                 raise ValueError(f"scenario {sid!r} object {obj['name']!r}: probabilities sum to {total:.6f}, not 1")

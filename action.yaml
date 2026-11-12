@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: "Hardened WiTB gym: hidden synthetic test with true placements, predictors run on hidden inputs; fixed baselines, reproduction, hardening audit (variants + shortcuts through evaluate_test.sh), reference-only scores."
+notes: "Final hardening job: 2000-scenario hidden test, float-tolerant validation, regularised stacker; fixed baselines, audit through evaluate_test.sh, reference-only scores from scratch."

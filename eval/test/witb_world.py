@@ -376,7 +376,7 @@ def main() -> None:
     parser.add_argument("--train-out", type=Path, default=Path("data/witb_train.json"))
     parser.add_argument("--test-out", type=Path, default=Path("eval/test/witb_test_hidden.json"))
     parser.add_argument("--train-count", type=int, default=240)
-    parser.add_argument("--test-count", type=int, default=800)
+    parser.add_argument("--test-count", type=int, default=2000)
     args = parser.parse_args()
     world = World()
     train = build_split(args.train_count, TRAIN_SEED, world)

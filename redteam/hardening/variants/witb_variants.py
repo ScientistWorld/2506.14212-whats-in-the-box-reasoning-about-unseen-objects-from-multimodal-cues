@@ -139,7 +139,10 @@ def run_mode(args, scenarios: list[dict]) -> dict:
             row = {}
             for o in s["objects"]:
                 n = o["name"]
-                x = params["bias"] + params["w_audio"] * logit(aud[n][0]) + params["w_vision"] * logit(vis[s["id"]][n][0])
+                c = params.get("logit_clip", CLIP)
+                xa = logit(min(1 - c, max(c, aud[n][0])))
+                xv = logit(min(1 - c, max(c, vis[s["id"]][n][0])))
+                x = params["bias"] + params["w_audio"] * xa + params["w_vision"] * xv
                 p = sigmoid(x)
                 row[n] = [p, 1.0 - p]
             preds[s["id"]] = row

@@ -1,0 +1,266 @@
+{
+  "experiments": {
+    "witb_placement_inference": {
+      "split": "test",
+      "num_scenarios": 800,
+      "num_objects": 2841,
+      "results": {
+        "better_cue_weights": {
+          "truth_correlation": 0.8278690740770347,
+          "brier_score": 0.07870384446044079,
+          "log_loss": 0.25849235728541703
+        },
+        "better_visual_floor": {
+          "truth_correlation": 0.8266951837111052,
+          "brier_score": 0.07955655549676804,
+          "log_loss": 0.2628423306668597
+        },
+        "better_weight_cue": {
+          "truth_correlation": -1.0,
+          "brier_score": 1.0,
+          "log_loss": 9.210340371976182
+        },
+        "full_neurosymbolic": {
+          "truth_correlation": 0.8132968535259479,
+          "brier_score": 0.08471354796577253,
+          "log_loss": 0.332924596129102
+        },
+        "ref_samples5000": {
+          "truth_correlation": 0.814697685801024,
+          "brier_score": 0.08413904290823919,
+          "log_loss": 0.32146932667733086
+        },
+        "ref_seed29": {
+          "truth_correlation": 0.8120215866319551,
+          "brier_score": 0.08525536734570721,
+          "log_loss": 0.33862645750026266
+        },
+        "ref_seed43": {
+          "truth_correlation": 0.8167792915354206,
+          "brier_score": 0.08327377825771078,
+          "log_loss": 0.31166810727434263
+        },
+        "sc_constant": {
+          "truth_correlation": 0.0,
+          "brier_score": 0.25,
+          "log_loss": 0.6931471805599051
+        },
+        "sc_copy_train_labels": {
+          "truth_correlation": 0.0,
+          "brier_score": 0.25,
+          "log_loss": 0.6931471805599051
+        },
+        "sc_crash": {
+          "truth_correlation": -1.0,
+          "brier_score": 1.0,
+          "log_loss": 9.210340371976182
+        },
+        "sc_extreme": {
+          "truth_correlation": 0.7747272087293207,
+          "brier_score": 0.11263639563533967,
+          "log_loss": 1.0374195420740475
+        },
+        "sc_missing_half": {
+          "truth_correlation": -1.0,
+          "brier_score": 1.0,
+          "log_loss": 9.210340371976182
+        },
+        "sc_nan": {
+          "truth_correlation": -1.0,
+          "brier_score": 1.0,
+          "log_loss": 9.210340371976182
+        },
+        "sc_near_constant": {
+          "truth_correlation": 0.8132968535266245,
+          "brier_score": 0.24999966216126582,
+          "log_loss": 0.6931465048824753
+        },
+        "sc_out_of_range": {
+          "truth_correlation": -1.0,
+          "brier_score": 1.0,
+          "log_loss": 9.210340371976182
+        },
+        "sc_read_hidden": {
+          "truth_correlation": 0.0,
+          "brier_score": 0.25,
+          "log_loss": 0.6931471805599051
+        },
+        "sc_self_report": {
+          "truth_correlation": 0.8132968535259479,
+          "brier_score": 0.08471354796577253,
+          "log_loss": 0.332924596129102
+        },
+        "sc_train_memorizer": {
+          "truth_correlation": 0.8132968535259479,
+          "brier_score": 0.08471354796577253,
+          "log_loss": 0.332924596129102
+        },
+        "sc_unnormalized": {
+          "truth_correlation": -1.0,
+          "brier_score": 1.0,
+          "log_loss": 9.210340371976182
+        },
+        "simple_trained_late_fusion": {
+          "truth_correlation": 0.778247096092925,
+          "brier_score": 0.11087645195353749,
+          "log_loss": 1.0212098617291405
+        },
+        "weaker_audio_only": {
+          "truth_correlation": 0.7672970289762817,
+          "brier_score": 0.10479270456288721,
+          "log_loss": 0.34367196926814514
+        },
+        "weaker_late_fusion": {
+          "truth_correlation": 0.7719705606416273,
+          "brier_score": 0.11607097642171328,
+          "log_loss": 0.3865503404561517
+        },
+        "weaker_one_sample": {
+          "truth_correlation": 0.5979686433909289,
+          "brier_score": 0.1687812979741414,
+          "log_loss": 0.9472364344164422
+        },
+        "weaker_vision_only": {
+          "truth_correlation": 0.48530777438829714,
+          "brier_score": 0.19456627031821214,
+          "log_loss": 0.6257543073998585
+        },
+        "weaker_weight_only": {
+          "truth_correlation": 0.5923610622811037,
+          "brier_score": 0.1622778305482691,
+          "log_loss": 0.46720573518785535
+        }
+      },
+      "_diagnostics": {
+        "better_cue_weights": {
+          "runtime_s": 0.37,
+          "status": "ok"
+        },
+        "better_visual_floor": {
+          "runtime_s": 0.32,
+          "status": "ok"
+        },
+        "better_weight_cue": {
+          "runtime_s": 0.32,
+          "status": "failed",
+          "reason": "invalid output: scenario 'witb_bb263857e0' object 'cutting board': probability outside [0, 1]"
+        },
+        "full_neurosymbolic": {
+          "runtime_s": 0.37,
+          "status": "ok"
+        },
+        "ref_samples5000": {
+          "runtime_s": 126.0,
+          "status": "ok"
+        },
+        "ref_seed29": {
+          "runtime_s": 23.73,
+          "status": "ok"
+        },
+        "ref_seed43": {
+          "runtime_s": 24.18,
+          "status": "ok"
+        },
+        "sc_constant": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        },
+        "sc_copy_train_labels": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        },
+        "sc_crash": {
+          "runtime_s": 0.27,
+          "status": "failed",
+          "reason": "exit code 3"
+        },
+        "sc_extreme": {
+          "runtime_s": 0.26,
+          "status": "ok"
+        },
+        "sc_missing_half": {
+          "runtime_s": 0.32,
+          "status": "failed",
+          "reason": "invalid output: missing scenario 'witb_06d39d20ef'"
+        },
+        "sc_nan": {
+          "runtime_s": 0.27,
+          "status": "failed",
+          "reason": "invalid output: scenario 'witb_83702ac161' object 'yoga mat': probability outside [0, 1]"
+        },
+        "sc_near_constant": {
+          "runtime_s": 0.37,
+          "status": "ok"
+        },
+        "sc_out_of_range": {
+          "runtime_s": 0.27,
+          "status": "failed",
+          "reason": "invalid output: scenario 'witb_83702ac161' object 'yoga mat': probability outside [0, 1]"
+        },
+        "sc_read_hidden": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        },
+        "sc_self_report": {
+          "runtime_s": 0.37,
+          "status": "ok"
+        },
+        "sc_train_memorizer": {
+          "runtime_s": 0.32,
+          "status": "ok"
+        },
+        "sc_unnormalized": {
+          "runtime_s": 0.27,
+          "status": "failed",
+          "reason": "invalid output: scenario 'witb_83702ac161' object 'yoga mat': box probabilities sum to 2.000000, not 1"
+        },
+        "simple_trained_late_fusion": {
+          "runtime_s": 0.37,
+          "status": "ok"
+        },
+        "weaker_audio_only": {
+          "runtime_s": 0.27,
+          "status": "ok"
+        },
+        "weaker_late_fusion": {
+          "runtime_s": 0.37,
+          "status": "ok"
+        },
+        "weaker_one_sample": {
+          "runtime_s": 0.42,
+          "status": "ok"
+        },
+        "weaker_vision_only": {
+          "runtime_s": 0.37,
+          "status": "ok"
+        },
+        "weaker_weight_only": {
+          "runtime_s": 0.32,
+          "status": "ok"
+        }
+      },
+      "_baselines": {
+        "audio_only_ablation": {
+          "truth_correlation": 0.7672970289762817,
+          "brier_score": 0.10479270456288721,
+          "log_loss": 0.34367196926814514
+        },
+        "late_fusion_average": {
+          "truth_correlation": 0.7719705606416273,
+          "brier_score": 0.11607097642171328,
+          "log_loss": 0.3865503404561517
+        },
+        "uniform_chance": {
+          "truth_correlation": 0.0,
+          "brier_score": 0.25,
+          "log_loss": 0.6931471805599051
+        },
+        "vision_only_ablation": {
+          "truth_correlation": 0.48530777438829714,
+          "brier_score": 0.19456627031821214,
+          "log_loss": 0.6257543073998585
+        }
+      }
+    }
+  }
+}

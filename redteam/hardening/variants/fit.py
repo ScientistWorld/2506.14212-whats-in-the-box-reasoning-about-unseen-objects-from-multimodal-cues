@@ -24,6 +24,11 @@ import witb_bayes as wb  # noqa: E402
 from witb_variants import audio_only, cache_dir, generalized_posterior, logit  # noqa: E402
 
 FLOOR = 1e-4
+STACK_CLIP = 0.005  # probabilities are clipped to [clip, 1 - clip] before the logit
+
+
+def clipped_logit(p: float) -> float:
+    return logit(min(1.0 - STACK_CLIP, max(STACK_CLIP, p)))
 
 
 def train_log_loss(scenarios, tables, params) -> float:
@@ -47,12 +52,12 @@ def grid(scenarios, tables, base, axes):
     return best
 
 
-def fit_logistic(rows):
-    """rows: (x_audio, x_vision, y). Newton-Raphson for 3-parameter logistic regression."""
+def fit_logistic(rows, l2: float = 1.0):
+    """rows: (x_audio, x_vision, y). L2-regularised Newton-Raphson logistic regression."""
     w = [0.0, 1.0, 1.0]
-    for _ in range(50):
-        g = [0.0, 0.0, 0.0]
-        h = [[0.0] * 3 for _ in range(3)]
+    for _ in range(100):
+        g = [l2 * wi if i else 0.0 for i, wi in enumerate(w)]
+        h = [[(l2 if (i == j and i) else 0.0) + (1e-9 if i == j else 0.0) for j in range(3)] for i in range(3)]
         for xa, xv, y in rows:
             x = (1.0, xa, xv)
             z = sum(wi * xi for wi, xi in zip(w, x))
@@ -60,8 +65,7 @@ def fit_logistic(rows):
             for i in range(3):
                 g[i] += (p - y) * x[i]
                 for j in range(3):
-                    h[i][j] += p * (1 - p) * x[i] * x[j] + (1e-6 if i == j else 0.0)
-        # solve h * d = g (3x3 Gaussian elimination)
+                    h[i][j] += p * (1 - p) * x[i] * x[j]
         a = [row[:] + [gi] for row, gi in zip(h, g)]
         for c in range(3):
             piv = max(range(c, 3), key=lambda r: abs(a[r][c]))
@@ -72,10 +76,12 @@ def fit_logistic(rows):
                     for cc in range(c, 4):
                         a[r][cc] -= f * a[c][cc]
         d = [a[i][3] / a[i][i] for i in range(3)]
-        w = [wi - di for wi, di in zip(w, d)]
-        if max(abs(di) for di in d) < 1e-8:
+        step = max(abs(di) for di in d)
+        scale = min(1.0, 2.0 / step) if step > 0 else 1.0
+        w = [wi - scale * di for wi, di in zip(w, d)]
+        if step < 1e-9:
             break
-    return {"bias": w[0], "w_audio": w[1], "w_vision": w[2]}
+    return {"bias": w[0], "w_audio": w[1], "w_vision": w[2], "l2": l2, "logit_clip": STACK_CLIP}
 
 
 def main() -> None:
@@ -134,7 +140,7 @@ def main() -> None:
     for s in scenarios:
         aud = audio_only(s)
         for name, box in s["true_box"].items():
-            rows.append((logit(aud[name][0]), logit(vision[s["id"]][name][0]), 1.0 if box == 0 else 0.0))
+            rows.append((clipped_logit(aud[name][0]), clipped_logit(vision[s["id"]][name][0]), 1.0 if box == 0 else 0.0))
     out["trained_late_fusion"] = fit_logistic(rows)
 
     args.out.write_text(json.dumps(out, indent=2) + "\n")

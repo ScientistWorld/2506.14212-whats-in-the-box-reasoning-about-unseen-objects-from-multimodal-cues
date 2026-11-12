@@ -1,0 +1,53 @@
+{
+  "experiments": {
+    "witb_placement_inference": {
+      "split": "test",
+      "num_scenarios": 800,
+      "num_objects": 2841,
+      "results": {
+        "full_neurosymbolic": {
+          "truth_correlation": 0.8132968535259479,
+          "brier_score": 0.08471354796577253,
+          "log_loss": 0.332924596129102
+        },
+        "sc_late_added": {
+          "truth_correlation": 0.0,
+          "brier_score": 0.25,
+          "log_loss": 0.6931471805599051
+        }
+      },
+      "_diagnostics": {
+        "full_neurosymbolic": {
+          "runtime_s": 0.32,
+          "status": "ok"
+        },
+        "sc_late_added": {
+          "runtime_s": 0.22,
+          "status": "ok"
+        }
+      },
+      "_baselines": {
+        "audio_only_ablation": {
+          "truth_correlation": 0.7672970289762817,
+          "brier_score": 0.10479270456288721,
+          "log_loss": 0.34367196926814514
+        },
+        "late_fusion_average": {
+          "truth_correlation": 0.7719705606416273,
+          "brier_score": 0.11607097642171328,
+          "log_loss": 0.3865503404561517
+        },
+        "uniform_chance": {
+          "truth_correlation": 0.0,
+          "brier_score": 0.25,
+          "log_loss": 0.6931471805599051
+        },
+        "vision_only_ablation": {
+          "truth_correlation": 0.48530777438829714,
+          "brier_score": 0.19456627031821214,
+          "log_loss": 0.6257543073998585
+        }
+      }
+    }
+  }
+}
